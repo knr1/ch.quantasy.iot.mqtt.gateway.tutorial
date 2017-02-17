@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    width="210mm"
+    height="297mm"
+    viewBox="0 0 744.09448819 1052.3622047"
+    id="svg2"
+    version="1.1"
+    inkscape:version="0.91 r13725"
+    sodipodi:docname="visual.svg">
+    <defs
+        id="defs4">
+        <linearGradient
+            inkscape:collect="always"
+            id="linearGradient4196">
+            <stop
+                style="stop-color:#8d8d8d;stop-opacity:1;"
+                offset="0"
+                id="stop4198" />
+            <stop
+                style="stop-color:#8d8d8d;stop-opacity:0;"
+                offset="1"
+                id="stop4200" />
+        </linearGradient>
+        <inkscape:perspective
+            sodipodi:type="inkscape:persp3d"
+            inkscape:vp_x="0 : 526.1811 : 1"
+            inkscape:vp_y="0 : 1000 : 0"
+            inkscape:vp_z="744.09449 : 526.1811 : 1"
+            inkscape:persp3d-origin="372.04724 : 350.7874 : 1"
+            id="perspective4156" />
+        <linearGradient
+            inkscape:collect="always"
+            xlink:href="#linearGradient4196"
+            id="linearGradient4202"
+            x1="327.79095"
+            y1="703.85962"
+            x2="328.8082"
+            y2="814.97638"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="translate(26.263966,185.86807)" />
+    </defs>
+    <sodipodi:namedview
+        id="base"
+        pagecolor="#ffffff"
+        bordercolor="#666666"
+        borderopacity="1.0"
+        inkscape:pageopacity="0.0"
+        inkscape:pageshadow="2"
+        inkscape:zoom="0.49497475"
+        inkscape:cx="-827.95797"
+        inkscape:cy="496.0972"
+        inkscape:document-units="px"
+        inkscape:current-layer="layer1"
+        showgrid="false"
+        inkscape:window-width="3200"
+        inkscape:window-height="1657"
+        inkscape:window-x="0"
+        inkscape:window-y="0"
+        inkscape:window-maximized="1" />
+    <metadata
+        id="metadata7">
+        <rdf:RDF>
+            <cc:Work
+                rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type
+                    rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                <dc:title></dc:title>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <g
+        inkscape:label="Layer 1"
+        inkscape:groupmode="layer"
+        id="layer1">
+        <text
+            xml:space="preserve"
+            style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+            x="240.41632"
+            y="339.19452"
+            id="text4204"
+            sodipodi:linespacing="125%"><tspan
+            sodipodi:role="line"
+            id="tspan4206"
+            x="240.41632"
+            y="339.19452">Current Value</tspan></text>
+        <text
+            class="tutorialText"
+            textId="1"
+            xml:space="preserve"
+            style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+            x="329.30972"
+            y="420.00671"
+            id="text4208"
+            sodipodi:linespacing="125%"><tspan
+            sodipodi:role="line"
+            id="tspan4210"
+            x="329.30972"
+            y="420.00671">XXX</tspan></text>
+        <g
+            class="tutorialButton"
+            buttonId="1"
+            id="g4216"
+            transform="translate(-26.263966,-185.86807)">
+            <rect
+                rx="5.3341398"
+                ry="5.3341398"
+                y="656.38245"
+                x="270.72086"
+                height="98.994949"
+                width="254.55844"
+                id="rect4186"
+                style="opacity:0.90200034;fill:url(#linearGradient4202);fill-opacity:1;fill-rule:evenodd;stroke:#a8a8a8;stroke-width:19.20000076;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+            <text
+                class="tutorialButtonText"
+                buttonTextId="1"
+                sodipodi:linespacing="125%"
+                id="text4212"
+                y="716.99158"
+                x="357.59399"
+                style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                xml:space="preserve"><tspan
+                y="716.99158"
+                x="357.59399"
+                id="tspan4214"
+                sodipodi:role="line">Play</tspan></text>
+        </g>
+    </g>
+</svg>
