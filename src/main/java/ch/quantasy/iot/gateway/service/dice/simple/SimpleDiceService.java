@@ -20,18 +20,10 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> {
 
-    private static String computerName;
+    
     private final SimpleDice dice;
 
-    static {
-        try {
-            computerName = java.net.InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(CPULoadService.class.getName()).log(Level.SEVERE, null, ex);
-            computerName = "undefined";
-        }
-    }
-
+    
     public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName) throws MqttException {
         super(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();

@@ -16,7 +16,6 @@ public class SimpleDiceServiceContract extends ClientContract {
     private final String PLAY;
     private final String SIDES;
     public final String INTENT_PLAY;
-    public final String INTENT_SIDES;
     public final String STATUS_SIDES;
     public final String EVENT_PLAY;
 
@@ -27,7 +26,6 @@ public class SimpleDiceServiceContract extends ClientContract {
         SIDES = "sides";
 
         INTENT_PLAY = INTENT + "/" + PLAY;
-        INTENT_SIDES = INTENT + "/" + SIDES;
         STATUS_SIDES = STATUS + "/" + SIDES;
         EVENT_PLAY = EVENT + "/" + PLAY;
     }

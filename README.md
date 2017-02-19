@@ -157,21 +157,21 @@ Now, you can choose your favorite programming language / environment (Node-Red w
 Sending a 'true' to the intent-topic: 
 
 ```
-Tutorial/SimpleDice/<computerName>/play
+Tutorial/SimpleDice/<computerName>/I/play
 ```
 
 ... will make the service work.
 
 When the service has done something, it will respond on the event-topic:
 ```
-Tutorial/SimpleDice/<computerName>/play
+Tutorial/SimpleDice/<computerName>/E/play
 ```
 
 Go ahead and subscribe on that topic! (Remember: All events are always sent within an array.)
 
 If you want to know the status of the micro-service subscribe to the following status-topic:
 ```
-Tutorial/SimpleDice/<computerName>/status/#
+Tutorial/SimpleDice/<computerName>/S/#
 ```
 
 You will always receive the latest status the micro-service is operating in.
@@ -181,6 +181,237 @@ The following diagram gives the overview of what has just been done:
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice-Full.svg">
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
+
+###GUI
+Now, we have created a component, ready to serve. We now have to make it accessible. Therefore we create yet another component in any given language.
+In a first step a GUI within an OS-based programming language will be presented, then a browser-based GUI will follow
+
+####OS-GUI
+Any language can be used! Here a simple Java-Client is shown, which looks like this:
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/SimpleGUI.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/SimpleGUI.svg.png" alt="Micro-service-Diagram" />
+</a>
+And has the following code:
+
+```java
+public class SimpleGUIService extends Application {
+
+    private static String computerName;
+    private String instanceName;
+
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
+
+    public SimpleGUIService() {
+        Long timeStamp = System.currentTimeMillis();
+        instanceName = (timeStamp % 10000) + "@" + computerName;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("Simple GUI: " + instanceName);
+        stage.setWidth(600);
+
+        Button button = new Button();
+        button.setText("...");
+       
+        TextField textField = new TextField();
+        textField.setEditable(false);
+       
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.TOP_CENTER);
+
+        vbox.getChildren().addAll(textField, button);
+        stage.setScene(new Scene(vbox));
+        stage.show();
+
+    }
+}
+
+```
+
+###Micro-Service logic (Presenter)
+This time, the 'presenter' logic is put into the same class. As this class
+already extends 'Application', the convenience class GatewayClient is aggregated as 
+a uses relation-ship. Here is the complete class for the SimpleGUI:
+```java
+public class SimpleGUIService extends Application {
+
+    private static String computerName;
+    private String instanceName;
+
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
+
+    private GatewayClient<SimpleGUIServiceContract> gatewayClient;
+
+    public SimpleGUIService() {
+        Long timeStamp = System.currentTimeMillis();
+        URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
+        instanceName = (timeStamp % 10000) + "@" + computerName;
+        try {
+            gatewayClient = new GatewayClient<>(mqttURI, mqttClientName, new SimpleGUIServiceContract(instanceName));
+            gatewayClient.connect();
+            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_BUTTON_TEXT, "<String>");
+            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, "<String>");
+            gatewayClient.publishDescription(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: true");
+            gatewayClient.publishDescription(gatewayClient.getContract().STATUS_BUTTON_TEXT, "<String>");
+        } catch (MqttException ex) {
+            Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("Simple GUI: " + instanceName);
+        stage.setWidth(600);
+
+        Button button = new Button();
+        button.setText("...");
+        gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, "...");
+        
+        button.setOnAction((ActionEvent event) -> {
+            gatewayClient.publishEvent(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "true");
+        });
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT, (String topic, byte[] payload) -> {
+            Platform.runLater(() -> {
+                try {
+                    button.setText(gatewayClient.getMapper().readValue(payload, String.class));
+                } catch (IOException ex) {
+                    Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, button.getText());
+
+            });
+        });
+
+        TextField textField = new TextField();
+        textField.setEditable(false);
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, (String topic, byte[] payload) -> {
+            Platform.runLater(() -> {
+                try {
+                    textField.setText(gatewayClient.getMapper().readValue(payload, String.class));
+                } catch (IOException ex) {
+                    Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+        });
+
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.TOP_CENTER);
+
+        vbox.getChildren().addAll(textField, button);
+        stage.setScene(new Scene(vbox));
+        stage.show();
+
+    }
+}
+```
+
+The missing class is the Contract itself. Here it is:
+
+```java
+public class SimpleGUIServiceContract extends ClientContract {
+
+    private final String TEXTFIELD;
+    private final String TEXT;
+    public final String INTENT_BUTTON_TEXT;
+    public final String STATUS_BUTTON_TEXT;
+    private final String BUTTON;
+    private final String CLICKED;
+    public final String INTENT_TEXTFIELD_TEXT;
+    public final String EVENT_BUTTON_CLICKED;
+
+    public SimpleGUIServiceContract(String instanceID) {
+        super("Tutorial", "SimpleGUI", instanceID);
+
+        TEXTFIELD = "textField";
+        TEXT = "text";
+        BUTTON = "button";
+        CLICKED = "clicked";
+
+        INTENT_BUTTON_TEXT = INTENT + "/" + BUTTON + "/" + TEXT;
+        STATUS_BUTTON_TEXT = STATUS + "/" + BUTTON + "/" + TEXT;
+        INTENT_TEXTFIELD_TEXT = INTENT + "/" + TEXTFIELD + "/" + TEXT;
+        EVENT_BUTTON_CLICKED = EVENT + "/" + BUTTON + "/" + CLICKED;
+    }
+}
+```
+###How to access the new Micro-Service
+Now, you can choose your favorite programming language / environment (Node-Red works fine as well) and can access the Micro-Service...
+Sending a <string> such as "Play" to the intent-topic: 
+
+```
+Tutorial/SimpleGUI/<instance>/I/button/text
+```
+
+... will give the button of the service a name.
+
+Sending a <string> such as "helloWorld" to the intent-topic: 
+
+```
+Tutorial/SimpleGUI/<instance>/I/textField/text
+```
+
+... will write into the textField of the service.
+
+When the button of the service has been clicked, it will respond on the event-topic:
+```
+Tutorial/SimpleGUI/<instance>/E/button/clicked
+```
+
+Go ahead and subscribe on that topic! (Remember: All events are always sent within an array.)
+
+If you want to know the status of the micro-service subscribe to the following status-topic:
+```
+Tutorial/SimpleGUI/<instance>/S/#
+```
+
+You will always receive the latest status the micro-service is operating in.
+
+###Multiple instances of a Micro-Service
+As you might have realized, the instance name is not only the computer name, but some arbitrary number. This allows the co-existance of
+multiple instances of the same service on the same 'computer'.
+
+Hence, in order to get the button clicked events of all instances of this micro-service, one would subscribe to the following topic:
+```
+Tutorial/SimpleGUI/+/E/button/clicked
+
+``` 
+
+
+
+The following diagram gives the overview of what has just been done:
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg.png" alt="Micro-service-Diagram" />
+</a>
+
+
+
+ 
+
 
 
 
