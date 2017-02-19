@@ -401,6 +401,14 @@ Tutorial/SimpleGUI/+/E/button/clicked
 
 ``` 
 
+The following diagram gives the overview of what has just been done:
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg.png" alt="Micro-service-Diagram" />
+</a>
+
+
+
+
 ## Servant: Glueing Micro-Services
 As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone within the system), there is
 something needed in order to glue the micro-services together. This is equivalent to the MVP pattern, where neither the model M nor the view V know each other.
@@ -412,10 +420,6 @@ Services are controlled and managed by Servants (orchestration). Servants are co
 
 
 
-The following diagram gives the overview of what has just been done:
-<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg.png" alt="Micro-service-Diagram" />
-</a>
 
 
 
