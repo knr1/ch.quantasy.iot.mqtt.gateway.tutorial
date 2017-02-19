@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gui;
+package ch.quantasy.iot.gateway.service.gui;
 
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;

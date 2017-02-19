@@ -3,7 +3,7 @@
 # MQTT-Gateway
 ch.quantasy.iot.mqtt.gateway.tutorial
 
-This tutorial introduces one possible way of how to program within the world of micro-services.
+This tutorial introduces one possible way of how to program within the world of event-driven micro-services.
 
 ## Difference to generic Micro-Services
 The ideology of micro-service]s is simple: Do one thing no more, no less... Provide a simple API.
@@ -400,6 +400,15 @@ Hence, in order to get the button clicked events of all instances of this micro-
 Tutorial/SimpleGUI/+/E/button/clicked
 
 ``` 
+
+## Servant: Glueing Micro-Services
+As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone within the system), there is
+something needed in order to glue the micro-services together. This is equivalent to the MVP pattern, where neither the model M nor the view V know each other.
+The 'glueing' is done via the presenter P. In the language of event-driven micro-services this is called an orchestrator. Here it is called a servant. It all is the
+same, but it these names should explain the context in which the program runs:
+Services are controlled and managed by Servants (orchestration). Servants are controlled and managed by (an) Agent(s) (Choreographer).
+
+
 
 
 
