@@ -77,7 +77,7 @@ public class SimpleGUIService extends Application {
         button.setOnAction((ActionEvent event) -> {
             gatewayClient.publishEvent(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "true");
         });
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT, (String topic, byte[] payload) -> {
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT+ "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
                     button.setText(gatewayClient.getMapper().readValue(payload, String.class));
@@ -91,7 +91,7 @@ public class SimpleGUIService extends Application {
 
         TextField textField = new TextField();
         textField.setEditable(false);
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, (String topic, byte[] payload) -> {
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT+ "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
                     textField.setText(gatewayClient.getMapper().readValue(payload, String.class));

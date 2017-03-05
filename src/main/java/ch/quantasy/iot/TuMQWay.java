@@ -43,12 +43,12 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        CPULoadService cpuLoadService = new CPULoadService(mqttURI);
-        MemoryUsageService memoryUsageService=new MemoryUsageService(mqttURI);
-        CallbackDiceService diceService=new CallbackDiceService(mqttURI);
+       // CPULoadService cpuLoadService = new CPULoadService(mqttURI);
+       // MemoryUsageService memoryUsageService=new MemoryUsageService(mqttURI);
+       // CallbackDiceService diceService=new CallbackDiceService(mqttURI);
         SimpleDiceService simpleDeviceService=new SimpleDiceService(mqttURI,"SimpleDice"+computerName,computerName);
         
-        ActiveDiceService activeDiceService=new ActiveDiceService(mqttURI);
+       // ActiveDiceService activeDiceService=new ActiveDiceService(mqttURI);
 
         System.in.read();
     }
