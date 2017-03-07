@@ -62,9 +62,9 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
         
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
-            for (String instance : simpleGUIServiceInstances) {
+            simpleGUIServiceInstances.forEach((instance) -> {
                 super.publishIntent(instance + "/I/textField/text", events[0].getValue());
-            }
+            });
 
         });
     }
