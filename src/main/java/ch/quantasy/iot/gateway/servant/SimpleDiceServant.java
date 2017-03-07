@@ -5,7 +5,6 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadService;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.mqtt.gateway.client.ClientContract;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
@@ -28,7 +27,7 @@ public class SimpleDiceServant extends GatewayClient<ClientContract> {
         try {
             computerName = java.net.InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            Logger.getLogger(CPULoadService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimpleDiceGUIServant.class.getName()).log(Level.SEVERE, null, ex);
             computerName = "undefined";
         }
     }

@@ -31,16 +31,26 @@ function MQTTconnect() {
         options.password = password;
     }
     console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
-    mqtt.connect(options);
+    mqtt.connect(options, {
+        will: {
+            topic: baseTopic + "/" + clientName + "/S/connection",
+            payload: 'false'
+        }
+    });
+    
 
 }
 
 
 function onConnect() {
+    message = new Paho.MQTT.Message("true");
+    message.destinationName = baseTopic + "/" + clientName + "/S/connection";
+    message.retained = true;
+    mqtt.send(message);
     $('#status').val('Connected to ' + host + ':' + port + path);
     // Connection succeeded; subscribe to our topic
     intentTopic = baseTopic + "/I/#";
-    mqtt.subscribe(intentTopic,{qos:1});
+    mqtt.subscribe(intentTopic, {qos: 1});
     $('#topic').val(intentTopic);
 }
 
@@ -60,7 +70,7 @@ function onMessageArrived(message) {
 ;
 
 function testTopic(topic, intent) {
-    regex = new RegExp(baseTopic + "/intent"+"(/.*)*"+"/"+intent + "(/.*)*");
+    regex = new RegExp(baseTopic + "/intent" + "(/.*)*" + "/" + intent + "(/.*)*");
     return topic.match(regex);
 }
 

@@ -6,12 +6,8 @@
 package ch.quantasy.iot.gateway.service.dice.simple;
 
 import ch.quantasy.iot.dice.simple.SimpleDice;
-import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadService;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**

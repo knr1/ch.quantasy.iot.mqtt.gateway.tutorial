@@ -59,7 +59,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
                 simpleGUIServiceInstances.remove(simpleGUIServiceInstance);
             }
         });
-
+        
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
             for (String instance : simpleGUIServiceInstances) {

@@ -5,12 +5,9 @@
  */
 package ch.quantasy.iot;
 
-import ch.quantasy.iot.dice.simple.SimpleDice;
-import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadService;
-import ch.quantasy.iot.gateway.service.dice.active.ActiveDiceService;
-import ch.quantasy.iot.gateway.service.dice.callback.CallbackDiceService;
+import ch.quantasy.iot.gateway.servant.SimpleDiceGUIServant;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceService;
-import ch.quantasy.iot.gateway.service.memory.MemoryUsageService;
+import ch.quantasy.iot.gateway.service.gui.SimpleGUIService;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -19,7 +16,10 @@ import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
- *
+ * This is a convenience class that starts the Services and the Servant.
+ * Please note, that these Classes could be started within their own processes 
+ * even on different computers.
+ * The only important thing is, that they connect to the same MQTT-broker instance.
  * @author reto
  */
 public class TuMQWay {
@@ -29,7 +29,7 @@ public class TuMQWay {
         try {
             computerName = java.net.InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            Logger.getLogger(CPULoadService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TuMQWay.class.getName()).log(Level.SEVERE, null, ex);
             computerName = "undefined";
         }
     }
@@ -43,13 +43,10 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-       // CPULoadService cpuLoadService = new CPULoadService(mqttURI);
-       // MemoryUsageService memoryUsageService=new MemoryUsageService(mqttURI);
-       // CallbackDiceService diceService=new CallbackDiceService(mqttURI);
         SimpleDiceService simpleDeviceService=new SimpleDiceService(mqttURI,"SimpleDice"+computerName,computerName);
+        SimpleDiceGUIServant simpleDiceGUIServant=new SimpleDiceGUIServant(mqttURI);
+        SimpleGUIService.main(mqttURI.toString());
         
-       // ActiveDiceService activeDiceService=new ActiveDiceService(mqttURI);
-
         System.in.read();
     }
 }
