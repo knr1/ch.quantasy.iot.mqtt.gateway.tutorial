@@ -1,6 +1,7 @@
 var mqtt;
 var reconnectTimeout = 2000;
 var clientName = "gui" + parseInt((Math.random() * 10000), 10).toString(32);
+var instanceTopic=baseTopic+"/"+clientName;
 
 function MQTTconnect() {
     if (typeof path == "undefined") {
@@ -33,8 +34,8 @@ function MQTTconnect() {
     console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
     mqtt.connect(options, {
         will: {
-            topic: baseTopic + "/" + clientName + "/S/connection",
-            payload: 'false'
+            topic: instanceTopic + "/S/connection",
+            payload: 'offline'
         }
     });
     
@@ -43,13 +44,13 @@ function MQTTconnect() {
 
 
 function onConnect() {
-    message = new Paho.MQTT.Message("true");
-    message.destinationName = baseTopic + "/" + clientName + "/S/connection";
+    message = new Paho.MQTT.Message("online");
+    message.destinationName = instanceTopic + "/S/connection";
     message.retained = true;
     mqtt.send(message);
     $('#status').val('Connected to ' + host + ':' + port + path);
     // Connection succeeded; subscribe to our topic
-    intentTopic = baseTopic + "/I/#";
+    intentTopic = instanceTopic + "/I/#";
     mqtt.subscribe(intentTopic, {qos: 1});
     $('#topic').val(intentTopic);
 }
@@ -70,7 +71,7 @@ function onMessageArrived(message) {
 ;
 
 function testTopic(topic, intent) {
-    regex = new RegExp(baseTopic + "/intent" + "(/.*)*" + "/" + intent + "(/.*)*");
+    regex = new RegExp(instanceTopic + "/I" + "(/.*)*" + "/" + intent + "(/.*)*");
     return topic.match(regex);
 }
 
@@ -82,18 +83,18 @@ function sendEvent(topic, object) {
     event.value = object;
     var yaml = json2yaml([event]);
     yaml = "---\n" + yaml;
-    console.log("to topic: " + baseTopic + " sending text: " + yaml);
+    console.log("to topic: " + instanceTopic + " sending text: " + yaml);
     message = new Paho.MQTT.Message(yaml);
-    message.destinationName = baseTopic + "/" + clientName + "/E/" + topic;
+    message.destinationName = instanceTopic + "/E/" + topic;
     message.retained = true;
     mqtt.send(message);
 }
 function sendStatus(topic, object) {
     var yaml = json2yaml(object);
     yaml = "---\n" + yaml;
-    console.log("to topic: " + baseTopic + " sending text: " + yaml);
+    console.log("to topic: " + instanceTopic + " sending text: " + yaml);
     message = new Paho.MQTT.Message(yaml);
-    message.destinationName = baseTopic + "/" + clientName + "/S/" + topic;
+    message.destinationName = instanceTopic + "/S/" + topic;
     message.retained = true;
     mqtt.send(message);
 }
@@ -109,4 +110,10 @@ function sendDescription(topic, object) {
 
 $(document).ready(function () {
     MQTTconnect();
+});
+$(window).on("beforeunload", function () {
+    message = new Paho.MQTT.Message("offline");
+    message.destinationName = instanceTopic + "/S/connection";
+    message.retained = true;
+    mqtt.send(message);
 });

@@ -12,6 +12,8 @@ import ch.quantasy.mqtt.gateway.client.GCEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -20,7 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class SimpleDiceServant extends GatewayClient<ClientContract> {
+public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
  private static String computerName;
 
     static {
@@ -33,20 +35,39 @@ public class SimpleDiceServant extends GatewayClient<ClientContract> {
     }
 
     SimpleDiceServiceContract simpleDiceServiceContract;
+        private Set<String> webViewServiceInstances;
 
-    public SimpleDiceServant(URI mqttURI) throws MqttException {
+
+    public SimpleDiceWebViewServant(URI mqttURI) throws MqttException {
         super(mqttURI, "ad92f0" + "SimpleDiceServant", new ClientContract("Servant", "WebView", "simpleDiceServant01"));
+        webViewServiceInstances=new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(computerName);
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
             System.out.println("Play: " + events[0]);
-            publishIntent("Tutorial/WebView/I/text", new PlayState("1",""+events[0].getValue()));
+            webViewServiceInstances.forEach((instance) -> {
+                System.out.println(instance);
+                super.publishIntent(instance + "/I/text", new PlayState("1",""+events[0].getValue()));
+            });
 
         });
         subscribe("Tutorial/WebView/+/E/button",(topic, payload) -> {
            publishIntent(simpleDiceServiceContract.INTENT_PLAY,"true"); 
         });
+        
+        subscribe("Tutorial/WebView/+/S/connection", (topic, payload) -> {
+            String status = super.getMapper().readValue(payload, String.class);
+            String simpleGUIServiceInstance = topic.replaceFirst("/S/connection", "");
+            System.out.println(simpleGUIServiceInstance + " " + status);
+
+            if (status.equals("online")) {
+                webViewServiceInstances.add(simpleGUIServiceInstance);
+            } else {
+                webViewServiceInstances.remove(simpleGUIServiceInstance);
+            }
+        });
+        
     }
 
     static class PlayState {
@@ -81,7 +102,7 @@ public class SimpleDiceServant extends GatewayClient<ClientContract> {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceServant r = new SimpleDiceServant(mqttURI);
+        SimpleDiceWebViewServant r = new SimpleDiceWebViewServant(mqttURI);
 
         System.in.read();
     }

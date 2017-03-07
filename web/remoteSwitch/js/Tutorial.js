@@ -31,6 +31,7 @@ $(window).on("load", function () {
     sendDescription("event/button", {"timestamp": "[0..]", "value": {"buttonId": "text", "action": "clicked"}});
 
 });
+
 function onVisibilityChanged() {
     var value = {
         "state": document.visibilityState
@@ -46,8 +47,8 @@ function onIntent(message) {
     if (testTopic(topic, "text")) {
         for (var i = 0; i < texts.length; i++) {
             var text = texts[i];
-            var textID = text.getAttribute("textId")
-            if (textID == payload.id) {
+            var textID = text.getAttribute("textId");
+            if (textID === payload.id) {
                 content = payload.content;
                 text.textContent = content;
             }

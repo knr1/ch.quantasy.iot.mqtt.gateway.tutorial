@@ -6,6 +6,7 @@
 package ch.quantasy.iot;
 
 import ch.quantasy.iot.gateway.servant.SimpleDiceGUIServant;
+import ch.quantasy.iot.gateway.servant.SimpleDiceWebViewServant;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceService;
 import ch.quantasy.iot.gateway.service.gui.SimpleGUIService;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class TuMQWay {
 
         SimpleDiceService simpleDeviceService=new SimpleDiceService(mqttURI,"SimpleDice"+computerName,computerName);
         SimpleDiceGUIServant simpleDiceGUIServant=new SimpleDiceGUIServant(mqttURI);
+        SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI);
         SimpleGUIService.main(mqttURI.toString());
         
         System.in.read();
