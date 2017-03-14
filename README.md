@@ -42,7 +42,6 @@ it is called a servant. These are all other names for 'almost' the same, but the
 
 ...
 
-Please note: If Servants are actively cross-orchestring some service-instance(s) (i.e. via their intents), the system will eventually become unmaintainable.
 Hint: Try to maintain a clear hierarchy without active-cross-orchestration. Servants might be controlled by 'super-servants'.
 Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three levels). The system will become unmaintainable. 
 
