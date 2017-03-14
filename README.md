@@ -615,6 +615,9 @@ function onIntent(message) {
 }
 ``` 
 
+Switch to [Master]
+
+[Master]:<https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/tree/master>
 
 
 
