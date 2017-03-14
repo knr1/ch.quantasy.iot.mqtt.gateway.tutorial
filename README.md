@@ -413,8 +413,225 @@ The following diagram gives the overview of what has just been done:
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
 
+###The UI in Java-Script (Browser)
+If you want to access the MQTT-broker from Java-Script, You have to access it via WebSocket (As the browsers in 2017 do not accept the MQTT-Protocol via native socket).
+However, this does not state any major problem as can be seen in the following.
+
+There exist multiple MQTT-Libraries for JavaScript (Browser and Server). In this case the paho library is used.
+First the HTML-File is shown:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tutorial</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/libs/jquery/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="../js/libs/json2yaml/json2yaml.js"></script>
+        <script type="text/javascript" src="../js/libs/yaml2json/yaml2json.js"></script>
+
+        <script type="text/javascript" src="../js/libs/mqtt/mqttws31.js"></script>
+
+        <script type="text/javascript" src="./js/Config.js"></script>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="output"></div>
+        <div>Subscribed to <input type='text' id='topic' disabled />
+            Status: <input type='text' id='status' size="80" disabled /></div>
+        <object id="visual" type="image/svg+xml" data="visual.svg"></object>
+        <script type="text/javascript" src="../js/GatewayClient.js"></script>
+        <script type="text/javascript" src="./js/Tutorial.js"></script>
+    </body>
+</html>
+</body>
+</html>
+```
+
+There is no need for jquery or json2yaml and yaml2json. These libraries simply serve for convenience reasons.
+The mqttws.js library does the heavy lifting for MQTT over WebSockets.
+
+The remaining files are all tutorial specific.
+The GatewayClient.js should serve the same purpose as the GatewayClient.java, however, this is not yet very mature. (Sorry)
+
+```js
+var mqtt;
+var reconnectTimeout = 2000;
+var clientName = "gui" + parseInt((Math.random() * 10000), 10).toString(32);
+var instanceTopic=baseTopic+"/"+clientName;
+
+function MQTTconnect() {
+    if (typeof path == "undefined") {
+        path = '';
+    }
+    mqtt = new Paho.MQTT.Client(
+            host,
+            port,
+            path,
+            "webView_" + parseInt(Math.random() * 1000000, 16)
+            );
+    var options = {
+        timeout: 3,
+        useSSL: useTLS,
+        cleanSession: cleansession,
+        onSuccess: onConnect,
+        onFailure: function (message) {
+            $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+            setTimeout(MQTTconnect, reconnectTimeout);
+        }
+    };
+
+    mqtt.onConnectionLost = onConnectionLost;
+    mqtt.onMessageArrived = onMessageArrived;
+
+    if (username != null) {
+        options.userName = username;
+        options.password = password;
+    }
+    console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+    mqtt.connect(options, {
+        will: {
+            topic: instanceTopic + "/S/connection",
+            payload: 'offline'
+        }
+    });
+    
+
+}
 
 
+function onConnect() {
+    message = new Paho.MQTT.Message("online");
+    message.destinationName = instanceTopic + "/S/connection";
+    message.retained = true;
+    mqtt.send(message);
+    $('#status').val('Connected to ' + host + ':' + port + path);
+    // Connection succeeded; subscribe to our topic
+    intentTopic = instanceTopic + "/I/#";
+    mqtt.subscribe(intentTopic, {qos: 1});
+    $('#topic').val(intentTopic);
+}
+
+function onConnectionLost(response) {
+    setTimeout(MQTTconnect, reconnectTimeout);
+    $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+
+}
+;
+
+function onMessageArrived(message) {
+    message.payloadObject = YAML.parse(message.payloadString);
+    onIntent(message);
+}
+;
+
+function testTopic(topic, intent) {
+    regex = new RegExp(instanceTopic + "/I" + "(/.*)*" + "/" + intent + "(/.*)*");
+    return topic.match(regex);
+}
+
+
+function sendEvent(topic, object) {
+    var event = {
+        "timestamp": Math.floor((new Date).getTime() / 1000)
+    };
+    event.value = object;
+    var yaml = json2yaml([event]);
+    yaml = "---\n" + yaml;
+    console.log("to topic: " + instanceTopic + " sending text: " + yaml);
+    message = new Paho.MQTT.Message(yaml);
+    message.destinationName = instanceTopic + "/E/" + topic;
+    message.retained = true;
+    mqtt.send(message);
+}
+function sendStatus(topic, object) {
+    var yaml = json2yaml(object);
+    yaml = "---\n" + yaml;
+    console.log("to topic: " + instanceTopic + " sending text: " + yaml);
+    message = new Paho.MQTT.Message(yaml);
+    message.destinationName = instanceTopic + "/S/" + topic;
+    message.retained = true;
+    mqtt.send(message);
+}
+function sendDescription(topic, object) {
+    var yaml = json2yaml(object);
+    yaml = "---\n" + yaml;
+    console.log("to topic: " + baseTopic + " sending text: " + yaml);
+    message = new Paho.MQTT.Message(yaml);
+    message.destinationName = baseTopic + "/D/" + topic;
+    message.retained = true;
+    mqtt.send(message);
+}
+
+$(document).ready(function () {
+    MQTTconnect();
+});
+$(window).on("beforeunload", function () {
+    message = new Paho.MQTT.Message("offline");
+    message.destinationName = instanceTopic + "/S/connection";
+    message.retained = true;
+    mqtt.send(message);
+});
+```
+
+The Tutorial.js serves as the  service implementation towards the svg and the GatewayClient
+```js
+var texts;
+var buttons;
+var svgDoc;
+var visual;
+
+$(window).on("load", function () {
+    visual = document.getElementById("visual");
+    svgDoc = visual.contentDocument; //get the inner DOM of visual.svg
+    //Caution: If working via 'file' and not via 'http' firefox will accept, chrome will throw an exception (cross-origin frame reference) 
+    buttons = svgDoc.getElementsByClassName('tutorialButton');
+    texts = svgDoc.getElementsByClassName('tutorialText');
+    var buttonTexts = svgDoc.getElementsByClassName('tutorialButtonText');
+    for (var i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        $(button).click(function (event) {
+            var svgElement = button;
+            var value = {
+                "buttonId": svgElement.getAttribute("buttonId"),
+                "action": "clicked"
+            }
+            sendEvent("button", value);
+        });
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChanged);
+    //Sorry for the bad 'Descriptions', but the json2yaml converter is not that great. Needs improvement!
+    sendDescription("intent/text", {"id": "text", "content": "text"});
+    sendDescription("status/visibility", {"state": "visible hidden"});
+    sendDescription("event/button", {"timestamp": "[0..]", "value": {"buttonId": "text", "action": "clicked"}});
+
+});
+
+function onVisibilityChanged() {
+    var value = {
+        "state": document.visibilityState
+    }
+    sendStatus("visibility", value);
+}
+
+function onIntent(message) {
+    var topic = message.destinationName;
+    var payload = message.payloadObject;
+
+    console.log("Topic=" + topic + ", payload=" + payload);
+    if (testTopic(topic, "text")) {
+        for (var i = 0; i < texts.length; i++) {
+            var text = texts[i];
+            var textID = text.getAttribute("textId");
+            if (textID === payload.id) {
+                content = payload.content;
+                text.textContent = content;
+            }
+        }
+    }
+}
+``` 
 
 ## Servant: Orchestrating Micro-Services
 As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone and without broader context). Hence, there is
@@ -422,11 +639,11 @@ something needed in order to glue the micro-services together in order to build 
 The 'glueing' is done via the presenter P. In the language of event-driven micro-services this is called an orchestrator. In this example here, however,
 it is called a servant. These are all other names for 'almost' the same, but these names should explain the context in which the program runs. Here is 'my' logic:
 * Services (players/instruments) are controlled and managed by Servants (orchestrators).
-* Servants (orchestrators) are controlled and managed by (an) Agent(s) (Choreographer(s)).
+* Servants (orchestrators) are controlled and managed by (an) Agent(s) (choreographer(s)).
 
 ...
 
-Please note: If Servants are actively cross-orchestring some service-instance(s) (i.e. via their intents), the system will become unmaintainable.
+Please note: If Servants are actively cross-orchestring some service-instance(s) (i.e. via their intents), the system will eventually become unmaintainable.
 Hint: Try to maintain a clear hierarchy without active-cross-orchestration. Servants might be controlled by 'super-servants'.
 Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three levels). The system will become unmaintainable. 
 
