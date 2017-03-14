@@ -5,6 +5,13 @@ ch.quantasy.iot.mqtt.gateway.tutorial
 
 ## Tutorial for Simple
 
+To execute and try-out the tutorial, execute the TuMqWay.java and point it to a running MQTT-Broker.
+This will start the services and will show a JavaFX-GUI.
+In order to test the WebComponent, run a local MQTT-Broker and load the file index.html with Chrome-Based browser.
+These browsers accept a connection to localhost, if the file has been loaded from the same machine.
+(Firefox would throw a 'not same origin' exception)
+
+
 This tutorial is example-oriented. The idea is to provide a 'Dice'-choreography starring a 'Dice'-service, a 'GUI'-service and a 'Dice-GUI'-servant.
 
 
@@ -16,10 +23,11 @@ the source to MQTT (via the convenient GatewayClient).
 </a>
 
 
-###Micro-Service source (Model)
+### Micro-Service source (Model)
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg">
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
 </a>
+
 
 Here, the tutorial starts by providing a POJ-program (Dice) which will then be made accessible as a micro-service.
 
