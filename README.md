@@ -615,21 +615,6 @@ function onIntent(message) {
 }
 ``` 
 
-## Servant: Orchestrating Micro-Services
-As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone and without broader context). Hence, there is
-something needed in order to glue the micro-services together in order to build a working system. This is equivalent to the MVP pattern, where neither the model M nor the view V know each other.
-The 'glueing' is done via the presenter P. In the language of event-driven micro-services this is called an orchestrator. In this example here, however,
-it is called a servant. These are all other names for 'almost' the same, but these names should explain the context in which the program runs. Here is 'my' logic:
-* Services (players/instruments) are controlled and managed by Servants (orchestrators).
-* Servants (orchestrators) are controlled and managed by (an) Agent(s) (choreographer(s)).
-
-...
-
-Please note: If Servants are actively cross-orchestring some service-instance(s) (i.e. via their intents), the system will eventually become unmaintainable.
-Hint: Try to maintain a clear hierarchy without active-cross-orchestration. Servants might be controlled by 'super-servants'.
-Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three levels). The system will become unmaintainable. 
-
-
 
 
 
