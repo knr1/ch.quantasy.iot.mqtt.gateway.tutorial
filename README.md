@@ -21,13 +21,6 @@ anarchic 'mess' cannot be controlled. It is like a typical 'goto' program, which
 Within this tutorial, a structured micro-service API is presented, which is introduced in the [SeMqWay] project. There, the idea of the structured service is provided and
 a GatewayClient providing some convenience-methods in Java. However, this idea works in any programming language and the GatewayClient is no must.
 
-## Tutorial
-
-This tutorial is example-oriented. The idea is to provide a 'Dice'-choreography starring a 'Dice'-service, a 'GUI'-service and a 'Dice-GUI'-servant.
-
-
-It is following the idea of the micro-service 'pattern' provided in the [SeMqWay] project. For a full micro-service, the service-source (aka. Dice) is created first and then the service-logic (aka. DiceService) will bind
-the source to MQTT (via the convenient GatewayClient).
 
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg">
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg.png" alt="Choreography of the Micro-services" />
@@ -39,6 +32,22 @@ the source to MQTT (via the convenient GatewayClient).
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
 </a>
 
+## Servant: Orchestrating Micro-Services
+As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone and without broader context). Hence, there is
+something needed in order to glue the micro-services together in order to build a working system. This is equivalent to the MVP pattern, where neither the model M nor the view V know each other.
+The 'glueing' is done via the presenter P. In the language of event-driven micro-services this is called an orchestrator. In this example here, however,
+it is called a servant. These are all other names for 'almost' the same, but these names should explain the context in which the program runs. Here is 'my' logic:
+* Services (players/instruments) are controlled and managed by Servants (orchestrators).
+* Servants (orchestrators) are controlled and managed by (an) Agent(s) (choreographer(s)).
+
+...
+
+Please note: If Servants are actively cross-orchestring some service-instance(s) (i.e. via their intents), the system will eventually become unmaintainable.
+Hint: Try to maintain a clear hierarchy without active-cross-orchestration. Servants might be controlled by 'super-servants'.
+Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three levels). The system will become unmaintainable. 
+
+
+### Tutorials
 Please switch in the .git to the Branch: [Simple]
 
 
