@@ -21,16 +21,16 @@ anarchic 'mess' cannot be controlled. It is like a typical 'goto' program, which
 Within this tutorial, a structured micro-service API is presented, which is introduced in the [SeMqWay] project. There, the idea of the structured service is provided and
 a GatewayClient providing some convenience-methods in Java. However, this idea works in any programming language and the GatewayClient is no must.
 
+### Micro-Service source (Model)
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
+</a>
 
+### Orcherstration: Connecting Micro-Services using Servants
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg">
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg.png" alt="Choreography of the Micro-services" />
 </a>
 
-
-###Micro-Service source (Model)
-<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
-</a>
 
 ## Servant: Orchestrating Micro-Services
 As micro-services are completely agnostic to their surrounding (they feel as they would be completely alone and without broader context). Hence, there is
