@@ -18,8 +18,8 @@ This tutorial is example-oriented. The idea is to provide a 'Timed Dice'-choreog
 It is following the idea of the micro-service 'pattern' provided in the [SeMqWay] project. For a full micro-service, the service-source (aka. Dice) is created first and then the service-logic (aka. DiceService) will bind
 the source to MQTT (via the convenient GatewayClient).
 
-<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-TimedServant-Full.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-TimedServant-Full.svg.png" alt="Choreography of the Micro-services" />
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/Timed/Micro-service-TimedServant-Full.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/Timed/Micro-service-TimedServant-Full.svg.png" alt="Choreography of the Micro-services" />
 </a>
 
 
@@ -182,8 +182,8 @@ interval: 1000
 
 
 The following diagram gives the overview of what has just been done:
-<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-TimerDice-Full.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-TimerDice-Full.svg.png" alt="Micro-service-Diagram" />
+<a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/Timed/Micro-service-TimerDice-Full.svg">
+<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/Timed/Micro-service-TimerDice-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
 
 ###GUI
@@ -215,7 +215,7 @@ Switch to [Master]
 
 
 
-
+ [TimerMqWay]:<https://github.com/knr1/ch.quantasy.timer.mqtt.gateway>
  [SeMqWay]:<https://github.com/knr1/ch.quantasy.mqtt.gateway>
  [Moquette]:<https://github.com/andsel/moquette>
  [MQTT-Lens]:<https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en>
