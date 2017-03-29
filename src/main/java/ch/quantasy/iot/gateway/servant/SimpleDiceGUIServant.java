@@ -39,7 +39,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
     private Set<String> simpleGUIServiceInstances;
 
     public SimpleDiceGUIServant(URI mqttURI) throws MqttException {
-        super(mqttURI, "SimpleDiceGUIServant", new ClientContract("Tutorial/Servant", "SimpleDiceGUI", "simpleDiceGUIServant01"));
+        super(mqttURI, "SimpleDiceGUIServant" + computerName, new ClientContract("Tutorial/Servant", "SimpleDiceGUI", computerName));
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(computerName);
@@ -59,9 +59,12 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
                 simpleGUIServiceInstances.remove(simpleGUIServiceInstance);
             }
         });
-        
+
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
+            if (events == null || events.length == 0) {
+                return;
+            }
             simpleGUIServiceInstances.forEach((instance) -> {
                 super.publishIntent(instance + "/I/textField/text", events[0].getValue());
             });

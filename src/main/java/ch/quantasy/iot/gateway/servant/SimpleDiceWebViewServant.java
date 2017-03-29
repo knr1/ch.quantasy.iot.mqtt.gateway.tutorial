@@ -23,7 +23,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @author reto
  */
 public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
- private static String computerName;
+
+    private static String computerName;
 
     static {
         try {
@@ -35,27 +36,30 @@ public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
     }
 
     SimpleDiceServiceContract simpleDiceServiceContract;
-        private Set<String> webViewServiceInstances;
-
+    private Set<String> webViewServiceInstances;
 
     public SimpleDiceWebViewServant(URI mqttURI) throws MqttException {
-        super(mqttURI, "ad92f0" + "SimpleDiceServant", new ClientContract("Servant", "WebView", "simpleDiceServant01"));
-        webViewServiceInstances=new HashSet<>();
+        super(mqttURI, "ad92f0" + "SimpleDiceServant" + computerName, new ClientContract("Tutorial/Servant", "WebView", computerName));
+        webViewServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(computerName);
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
+            if (events == null || events.length == 0) {
+                return;
+            }
+
             System.out.println("Play: " + events[0]);
             webViewServiceInstances.forEach((instance) -> {
                 System.out.println(instance);
-                super.publishIntent(instance + "/I/text", new PlayState("1",""+events[0].getValue()));
+                super.publishIntent(instance + "/I/text", new PlayState("1", "" + events[0].getValue()));
             });
 
         });
-        subscribe("Tutorial/WebView/+/E/button",(topic, payload) -> {
-           publishIntent(simpleDiceServiceContract.INTENT_PLAY,"true"); 
+        subscribe("Tutorial/WebView/+/E/button", (topic, payload) -> {
+            publishIntent(simpleDiceServiceContract.INTENT_PLAY, "true");
         });
-        
+
         subscribe("Tutorial/WebView/+/S/connection", (topic, payload) -> {
             String status = super.getMapper().readValue(payload, String.class);
             String simpleGUIServiceInstance = topic.replaceFirst("/S/connection", "");
@@ -67,7 +71,7 @@ public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
                 webViewServiceInstances.remove(simpleGUIServiceInstance);
             }
         });
-        
+
     }
 
     static class PlayState {
