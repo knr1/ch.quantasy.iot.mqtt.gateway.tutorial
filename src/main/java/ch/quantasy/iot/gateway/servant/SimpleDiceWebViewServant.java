@@ -24,25 +24,15 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
 
-    private static String computerName;
-
-    static {
-        try {
-            computerName = java.net.InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(SimpleDiceGUIServant.class.getName()).log(Level.SEVERE, null, ex);
-            computerName = "undefined";
-        }
-    }
-
+    
     private SimpleDiceServiceContract simpleDiceServiceContract;
     private Set<String> webViewServiceInstances;
 
-    public SimpleDiceWebViewServant(URI mqttURI) throws MqttException {
-        super(mqttURI, "ad92f0" + "SimpleDiceServant"+computerName, new ClientContract("Tutorial/Servant", "WebView", computerName));
+    public SimpleDiceWebViewServant(URI mqttURI,String instanceName) throws MqttException {
+        super(mqttURI, "ad92f0" + "SimpleDiceServant"+instanceName, new ClientContract("Tutorial/Servant", "WebView", instanceName));
         webViewServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
-        simpleDiceServiceContract = new SimpleDiceServiceContract(computerName);
+        simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
             GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
 //            System.out.println("Play: " + events[0]);
@@ -95,6 +85,18 @@ public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
         }
 
     }
+    
+    private static String computerName;
+
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(SimpleDiceGUIServant.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
+
 
     public static void main(String[] args) throws MqttException, InterruptedException, IOException {
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
@@ -105,7 +107,7 @@ public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceWebViewServant r = new SimpleDiceWebViewServant(mqttURI);
+        SimpleDiceWebViewServant r = new SimpleDiceWebViewServant(mqttURI,computerName);
 
         System.in.read();
     }

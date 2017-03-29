@@ -12,7 +12,7 @@ These browsers accept a connection to localhost, if the file has been loaded fro
 (Chrome would throw a 'not same origin' exception)
 
 
-This tutorial is example-oriented. The idea is to provide a 'Dice'-choreography starring a 'Dice'-service, a 'GUI'-service and a 'Dice-GUI'-servant.
+This tutorial is example-oriented. The idea is to provide a 'Timed Dice'-choreography starring a 'Dice'-service, a 'Timer'-service, a 'DiceTimer'-servant, 'GUI'-service a 'Dice-GUI'-service and a 'Dice-GUI'-servant.
 
 
 It is following the idea of the micro-service 'pattern' provided in the [SeMqWay] project. For a full micro-service, the service-source (aka. Dice) is created first and then the service-logic (aka. DiceService) will bind
@@ -29,105 +29,120 @@ the source to MQTT (via the convenient GatewayClient).
 </a>
 
 
-Here, the tutorial starts by providing a POJ-program (Dice) which will then be made accessible as a micro-service.
+Here, the tutorial starts by using the Dice-service that has been provided by the previous tutorial-step.
+Furthermore, the tutorial expects an instance of a Timer-Service, as is provided by: [TimerMqWay]
+
+The only thing left to do is to provide a link between the Dice-Service and the Timer-Service.
 
 ```java
-public class SimpleDice {
-    private static final Random random;
+public class TimerDiceServant extends GatewayClient<TimerDiceServantContract> {
 
-    static {
-        random = new Random();
-    }
-    private final int amountOfSides=6;
-    private int currentSide;
+    public static final String DISCRIMINATOR = "simpleDice";
 
-    public SimpleDice() {
-        play();
+    private SimpleDiceServiceContract simpleDiceServiceContract;
+    private TimerServiceContract timerServiceContract;
+
+    public TimerDiceServant(URI mqttURI,String mqttClientName, String serviceInstanceName) throws MqttException {
+        super(mqttURI, "pu34083" + "TimerDiceServant"+serviceInstanceName, new TimerDiceServantContract("Tutorial/Servant", "TimerDice", serviceInstanceName));
+      
+        simpleDiceServiceContract = new SimpleDiceServiceContract(serviceInstanceName);
+        timerServiceContract = new TimerServiceContract(serviceInstanceName);
+        subscribe(timerServiceContract.EVENT_TICK + "/" + DISCRIMINATOR, (topic, payload) -> {
+            publishIntent(simpleDiceServiceContract.INTENT_PLAY, true);
+        });
+
+        subscribe(getContract().INTENT_CONFIGURATION + "/#", (topic, payload) -> {
+            try {
+                TimerDiceConfiguration configuration = super.getMapper().readValue(payload, TimerDiceConfiguration.class);
+                DeviceTickerConfiguration timerConfig = new DeviceTickerConfiguration(DISCRIMINATOR, configuration.getEpoch(), configuration.getFirst(), configuration.getInterval(), configuration.getLast());
+                publishIntent(timerServiceContract.INTENT_CONFIGURATION, timerConfig);
+            } catch (Exception ex) {
+                Logger.getLogger(TimerDiceServant.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        subscribe(timerServiceContract.STATUS_CONFIGURATION + "/" + DISCRIMINATOR, (topic, payload) -> {
+            TimerDiceConfiguration configuration=this.getMapper().readValue(payload, TimerDiceConfiguration.class);
+                publishStatus(getContract().STATUS_CONFIGURATION, configuration);
+        });
+        connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean
+
     }
 
-    public int getAmountOfSides() {
-        return amountOfSides;
-    }
-
-    public void play() {
-        this.currentSide=random.nextInt(amountOfSides)+1;
-    }
-
-    public int getChosenSide() {
-        return currentSide;
-    }
 }
 ```
 
-###Micro-Service logic (Presenter)
-In a second step, a second program provides the micro-service abilities:
+What can be seen here is, that there is a special 'Configuration' object which is unique to the servant. It is a slightly smaller
+version of the original 'TimerConfiguration' object provided by the timer service. It is a simple POJO which can be (de-)serialized).
 
 ```java
-public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> {
+public class TimerDiceConfiguration {
 
-    private final SimpleDice dice;
+    private Long epoch;
+    private Integer first;
+    private Integer interval;
+    private Integer last;
 
-    public SimpleDiceService(URI mqttURI, String mqttClientName, String serviceInstanceName) throws MqttException {
-        super(mqttURI, mqttClientName, new SimpleDiceServiceContract(serviceInstanceName));
-        dice = new SimpleDice();
-        connect();
-        subscribe(getContract().INTENT_PLAY + "/#", (topic, payload) -> {
-            dice.play();
-            publishEvent(getContract().EVENT_PLAY, dice.getChosenSide());
-
-        });
-
-        publishDescription(getContract().EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().STATUS_SIDES, "[1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().INTENT_PLAY, "true");
-
-        publishStatus(getContract().STATUS_SIDES, dice.getAmountOfSides());
-
+    /**
+     *
+     * @param id Identifier of the ticker to be configured
+     * @param epoch {@link #setEpoch(java.lang.Long) }
+     * @param first {@link #setFirst(java.lang.Long) }
+     * @param interval {@link #setInterval(java.lang.Long) }
+     * @param last {@link #setLast(java.lang.Long) }
+     */
+    public TimerDiceConfiguration(Long epoch, Integer first, Integer interval, Integer last) {
+        this.epoch = epoch;
+        this.first = first;
+        this.interval = interval;
+        this.last = last;
     }
+
+    public TimerDiceConfiguration(TimerDiceConfiguration configuration) {
+        this(configuration.epoch, configuration.first, configuration.interval, configuration.last);
+    }
+
+...
 ```
 
 The missing class is the Contract itself. Here it is:
 
 ```java
-public class SimpleDiceServiceContract extends ClientContract {
-
-    private final String PLAY;
-    private final String SIDES;
-    public final String INTENT_PLAY;
-    public final String INTENT_SIDES;
-    public final String STATUS_SIDES;
-    public final String EVENT_PLAY;
-
-    public SimpleDiceServiceContract(String instanceID) {
-        super("Tutorial", "SimpleDice", instanceID);
-
-        PLAY = "play";
-        SIDES = "sides";
-
-        INTENT_PLAY = INTENT + "/" + PLAY;
-        INTENT_SIDES = INTENT + "/" + SIDES;
-        STATUS_SIDES = STATUS + "/" + SIDES;
-        EVENT_PLAY = EVENT + "/" + PLAY;
+public class TimerDiceServantContract extends ClientContract{
+    private final String CONFIGURATION;
+    public final String INTENT_CONFIGURATION;
+    public final String STATUS_CONFIGURATION;
+    
+    public TimerDiceServantContract(String rootContext, String baseClass) {
+        this(rootContext, baseClass,null);
     }
 
+    public TimerDiceServantContract(String rootContext, String baseClass, String instance) {
+        super(rootContext, baseClass, instance);
+        CONFIGURATION="configuration";
+        INTENT_CONFIGURATION=INTENT+"/"+CONFIGURATION;
+        STATUS_CONFIGURATION=STATUS+"/"+CONFIGURATION;
+    }   
 }
-``` 
+```
 
 ###Start of the Micro-Service
 Now what?!
-Now there is a fully fledged micro-service ready to serve.
+Now there is a fully fledged micro-service based system ready to serve.
+Each Service and each Servant can be started by its own!
+For convenience reason, here is a main-class that does this all on the same machine:
 
 Start it on any machine as follows, you might change the mqtt-address...:
 
 ```java
 public class TuMQWay {
-     private static String computerName;
+
+    private static String computerName;
 
     static {
         try {
             computerName = java.net.InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            Logger.getLogger(CPULoadService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TuMQWay.class.getName()).log(Level.SEVERE, null, ex);
             computerName = "undefined";
         }
     }
@@ -140,8 +155,18 @@ public class TuMQWay {
             System.out.printf("Per default, 'tcp://127.0.0.1:1883' is chosen.\nYou can provide another address as first argument i.e.: tcp://iot.eclipse.org:1883\n");
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
-        SimpleDiceService simpleDeviceService=new SimpleDiceService(mqttURI,"SimpleDice"+computerName,computerName);
-      
+
+        SimpleDiceService simpleDeviceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
+        SimpleDiceGUIServant simpleDiceGUIServant = new SimpleDiceGUIServant(mqttURI);
+        SimpleDiceWebViewServant simpleDiceWebViewServant = new SimpleDiceWebViewServant(mqttURI);
+
+        TimerService s = new TimerService(mqttURI, computerName);
+
+        
+        TimerDiceServant timerDiceServant=new TimerDiceServant(mqttURI, computerName);
+        
+        SimpleGUIService.main(mqttURI.toString());
+
         System.in.read();
     }
 }
