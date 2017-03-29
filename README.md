@@ -121,7 +121,7 @@ public class TimerDiceServantContract extends ClientContract{
 }
 ```
 
-###Start of the Micro-Service Based System
+### Start of the Micro-Service Based System
 Now what?!
 Now there is a fully fledged micro-service based system ready to serve.
 Each Service and each Servant can be started by its own!
@@ -168,7 +168,7 @@ public class TuMQWay {
 }
 
 ```
-###How to access the new Micro-Service
+### How to access the new Micro-Service
 Now, you can choose your favorite programming language / environment (Node-Red or MQTT-Lens works fine as well) and can access the Micro-Service / Servants...
 Sending to the intent-topic: 
 
@@ -186,15 +186,15 @@ The following diagram gives the overview of what has just been done:
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/Timed/Micro-service-TimerDice-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
 
-###GUI
+### GUI
 This is left as an exercise for the user :-)
-A NumberGUI is needed, that allows the user to enter a number...
-This number is brought to the Micro-Service-System as an event...
 
-A TimerDiceGUIServant will have to combine the TimerDiceServant and the NumberGUIService...
+* A NumberGUI is needed, that allows the user to enter a number...
+* This number is brought to the Micro-Service-System as an event...
+* A TimerDiceGUIServant will have to combine the TimerDiceServant and the NumberGUIService...
+* Start these two new Services...
 
-Start these two new Services...
-And voilà, you can control the timing with the help of a GUI....
+And voilà, you can control the timing with the help of a GUI.
 Please notice, you did not even have to stop the system for that.
 
 
