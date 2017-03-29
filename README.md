@@ -7,9 +7,9 @@ ch.quantasy.iot.mqtt.gateway.tutorial
 
 To execute and try-out the tutorial, execute the TuMqWay.java and point it to a running MQTT-Broker.
 This will start the services and will show a JavaFX-GUI.
-In order to test the WebComponent, run a local MQTT-Broker and load the file index.html with Chrome-Based browser.
+In order to test the WebComponent, run a local MQTT-Broker and load the file index.html with Firefox-Based browser.
 These browsers accept a connection to localhost, if the file has been loaded from the same machine.
-(Firefox would throw a 'not same origin' exception)
+(Chrome would throw a 'not same origin' exception)
 
 
 This tutorial is example-oriented. The idea is to provide a 'Dice'-choreography starring a 'Dice'-service, a 'GUI'-service and a 'Dice-GUI'-servant.
