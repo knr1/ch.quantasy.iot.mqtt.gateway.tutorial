@@ -23,12 +23,12 @@ a GatewayClient providing some convenience-methods in Java. However, this idea w
 
 ### Micro-Service source (Model)
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
+    <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice.svg.png" alt="Micro-service-Diagram" />
 </a>
 
 ### Orcherstration: Connecting Micro-Services using Servants
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg">
-<img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg.png" alt="Choreography of the Micro-services" />
+    <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleServant-Full.svg.png" alt="Choreography of the Micro-services" />
 </a>
 
 
@@ -47,10 +47,13 @@ Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three lev
 
 
 ### Tutorials
-Please switch in the .git to the Branch: [Simple]
+
+First Step: Please switch in the .git to the Branch: [Simple]
+Second Step: Then switch in the .git to the Branch: [Timed]
 
 
  [Simple]:<https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/tree/Simple>
+ [Timed]:<https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/tree/Timed>
  [SeMqWay]:<https://github.com/knr1/ch.quantasy.mqtt.gateway>
  [Moquette]:<https://github.com/andsel/moquette>
  [MQTT-Lens]:<https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en>
