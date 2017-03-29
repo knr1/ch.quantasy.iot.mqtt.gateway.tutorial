@@ -24,25 +24,16 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
 
-    private static String computerName;
-
-    static {
-        try {
-            computerName = java.net.InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(SimpleDiceGUIServant.class.getName()).log(Level.SEVERE, null, ex);
-            computerName = "undefined";
-        }
-    }
+    
 
     private SimpleDiceServiceContract simpleDiceServiceContract;
     private Set<String> simpleGUIServiceInstances;
 
-    public SimpleDiceGUIServant(URI mqttURI) throws MqttException {
-        super(mqttURI, "SimpleDiceGUIServant" + computerName, new ClientContract("Tutorial/Servant", "SimpleDiceGUI", computerName));
+    public SimpleDiceGUIServant(URI mqttURI,String instanceName) throws MqttException {
+        super(mqttURI, "SimpleDiceGUIServant" + instanceName, new ClientContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
-        simpleDiceServiceContract = new SimpleDiceServiceContract(computerName);
+        simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
 
         subscribe("Tutorial/SimpleGUI/+/S/connection", (topic, payload) -> {
             String status = super.getMapper().readValue(payload, String.class);
@@ -94,6 +85,17 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
         }
 
     }
+    
+    private static String computerName;
+
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(SimpleDiceGUIServant.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
 
     public static void main(String[] args) throws MqttException, InterruptedException, IOException {
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
@@ -104,7 +106,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceGUIServant r = new SimpleDiceGUIServant(mqttURI);
+        SimpleDiceGUIServant r = new SimpleDiceGUIServant(mqttURI,computerName);
 
         System.in.read();
     }
