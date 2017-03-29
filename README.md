@@ -113,7 +113,7 @@ public class SimpleDiceServiceContract extends ClientContract {
 }
 ``` 
 
-###Start of the Micro-Service
+### Start of the Micro-Service
 Now what?!
 Now there is a fully fledged micro-service ready to serve.
 
@@ -147,7 +147,7 @@ public class TuMQWay {
 }
 
 ```
-###How to access the new Micro-Service
+### How to access the new Micro-Service
 Now, you can choose your favorite programming language / environment (Node-Red works fine as well) and can access the Micro-Service...
 Sending a 'true' to the intent-topic: 
 
@@ -177,11 +177,11 @@ The following diagram gives the overview of what has just been done:
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleDice-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
 
-###GUI
+### GUI
 Now, we have created a component, ready to serve. We now have to make it accessible. Therefore we create yet another component in any given language.
 In a first step a GUI within an OS-based programming language will be presented, then a browser-based GUI will follow
 
-####OS-GUI
+#### OS-GUI
 <a href="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/SimpleGUI.svg">
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/SimpleGUI.svg.png" alt="Micro-service-Diagram" />
 </a>
@@ -234,7 +234,7 @@ public class SimpleGUIService extends Application {
 
 ```
 
-###Micro-Service logic (Presenter)
+### Micro-Service logic (Presenter)
 This time, the 'presenter' logic is put into the same class. As this class
 already extends 'Application', the convenience class GatewayClient is aggregated as 
 a uses relation-ship. Here is the complete class for the SimpleGUI:
@@ -356,7 +356,7 @@ public class SimpleGUIServiceContract extends ClientContract {
 Any language can be used! Here a simple Java-Client has been produced.
 
 
-###How to access the new Micro-Service
+### How to access the new Micro-Service
 Now, you can choose your favorite programming language / environment (Node-Red works fine as well) and can access the Micro-Service...
 Sending a <string> such as "Play" to the intent-topic: 
 
@@ -388,7 +388,7 @@ Tutorial/SimpleGUI/<instance>/S/#
 
 You will always receive the latest status the micro-service is operating in.
 
-###Multiple instances of a Micro-Service
+### Multiple instances of a Micro-Service
 As you might have realized, the instance name is not only the computer name, but some arbitrary number. This allows the co-existance of
 multiple instances of the same service on the same 'computer'.
 
@@ -403,7 +403,7 @@ The following diagram gives the overview of what has just been done:
 <img src="https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/blob/master/Micro-service-SimpleGUI-Full.svg.png" alt="Micro-service-Diagram" />
 </a>
 
-###The UI in Java-Script (Browser)
+### The UI in Java-Script (Browser)
 If you want to access the MQTT-broker from Java-Script, You have to access it via WebSocket (As the browsers in 2017 do not accept the MQTT-Protocol via native socket).
 However, this does not state any major problem as can be seen in the following.
 
