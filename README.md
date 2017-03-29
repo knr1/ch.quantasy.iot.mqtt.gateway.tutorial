@@ -48,8 +48,8 @@ Hint: Try not to create a hierarchy that is too deep (i.e. deeper than three lev
 
 ### Tutorials
 
-First Step: Please switch in the .git to the Branch: [Simple]
-Second Step: Then switch in the .git to the Branch: [Timed]
+* First Step: Please switch in the .git to the Branch: [Simple]
+* Second Step: Then switch in the .git to the Branch: [Timed]
 
 
  [Simple]:<https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/tree/Simple>
