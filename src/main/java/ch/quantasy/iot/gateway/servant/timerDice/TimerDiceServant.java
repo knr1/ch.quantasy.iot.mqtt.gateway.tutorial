@@ -31,9 +31,7 @@ public class TimerDiceServant extends GatewayClient<TimerDiceServantContract> {
 
     public TimerDiceServant(URI mqttURI,String instanceName) throws MqttException {
         super(mqttURI, "pu34083" + "TimerDiceServant"+instanceName, new TimerDiceServantContract("Tutorial/Servant", "TimerDice", instanceName));
-        publishDescription(getContract().INTENT_CONFIGURATION, "first: [null|0.." + Long.MAX_VALUE + "]\n interval: [null|1.." + Long.MAX_VALUE + "]\n last: [null|0.." + Long.MAX_VALUE + "]\n");
-        publishDescription(getContract().STATUS_CONFIGURATION, "first: [null|0.." + Long.MAX_VALUE + "]\n interval: [null|1.." + Long.MAX_VALUE + "]\n last: [null|0.." + Long.MAX_VALUE + "]\n");
-      
+       
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
         timerServiceContract = new TimerServiceContract(instanceName);
         subscribe(timerServiceContract.EVENT_TICK + "/" + DISCRIMINATOR, (topic, payload) -> {

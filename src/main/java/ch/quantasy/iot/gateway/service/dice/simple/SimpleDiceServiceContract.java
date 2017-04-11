@@ -6,6 +6,7 @@
 package ch.quantasy.iot.gateway.service.dice.simple;
 
 import ch.quantasy.mqtt.gateway.client.ClientContract;
+import java.util.Map;
 
 /**
  *
@@ -28,6 +29,13 @@ public class SimpleDiceServiceContract extends ClientContract {
         INTENT_PLAY = INTENT + "/" + PLAY;
         STATUS_SIDES = STATUS + "/" + SIDES;
         EVENT_PLAY = EVENT + "/" + PLAY;
+    }
+
+    @Override
+    protected void describe(Map<String, String> descriptions) {
+        descriptions.put(EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");
+        descriptions.put(STATUS_SIDES, "[1.." + Integer.MAX_VALUE + "]");
+        descriptions.put(INTENT_PLAY, "true");
     }
 
 }

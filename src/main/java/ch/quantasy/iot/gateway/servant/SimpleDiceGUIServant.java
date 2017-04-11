@@ -5,6 +5,7 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
+import ch.quantasy.iot.gateway.servant.timerDice.SimpleServantContract;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.mqtt.gateway.client.ClientContract;
 import ch.quantasy.mqtt.gateway.client.GCEvent;
@@ -30,7 +31,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
     private Set<String> simpleGUIServiceInstances;
 
     public SimpleDiceGUIServant(URI mqttURI,String instanceName) throws MqttException {
-        super(mqttURI, "SimpleDiceGUIServant"+instanceName, new ClientContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
+        super(mqttURI, "SimpleDiceGUIServant"+instanceName, new SimpleServantContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
