@@ -16,18 +16,18 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> {
 
-    
     private final SimpleDice dice;
 
-    
     public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName) throws MqttException {
         super(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();
         connect();
         subscribe(getContract().INTENT_PLAY + "/#", (topic, payload) -> {
-            dice.play();
-            publishEvent(getContract().EVENT_PLAY, dice.getChosenSide());
-
+            Boolean playing = getMapper().readValue(payload, Boolean.class);
+            if (playing!=null && playing) {
+                dice.play();
+                publishEvent(getContract().EVENT_PLAY, dice.getChosenSide());
+            }
         });
 
         publishDescription(getContract().EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");

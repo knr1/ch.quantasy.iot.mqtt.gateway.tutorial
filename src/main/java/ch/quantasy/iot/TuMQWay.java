@@ -49,6 +49,7 @@ public class TuMQWay {
         SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI,computerName);
         SimpleGUIService.main(mqttURI.toString());
         
+        
         System.in.read();
     }
 }
