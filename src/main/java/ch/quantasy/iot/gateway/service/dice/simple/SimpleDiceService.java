@@ -30,10 +30,7 @@ public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> 
             }
         });
 
-        publishDescription(getContract().EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().STATUS_SIDES, "[1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().INTENT_PLAY, "true");
-
+       
         publishStatus(getContract().STATUS_SIDES, dice.getAmountOfSides());
 
     }

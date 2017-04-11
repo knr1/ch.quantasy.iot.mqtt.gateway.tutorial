@@ -6,6 +6,7 @@
 package ch.quantasy.iot.gateway.service.gui;
 
 import ch.quantasy.mqtt.gateway.client.ClientContract;
+import java.util.Map;
 
 /**
  *
@@ -34,5 +35,13 @@ public class SimpleGUIServiceContract extends ClientContract {
         STATUS_BUTTON_TEXT = STATUS + "/" + BUTTON + "/" + TEXT;
         INTENT_TEXTFIELD_TEXT = INTENT + "/" + TEXTFIELD + "/" + TEXT;
         EVENT_BUTTON_CLICKED = EVENT + "/" + BUTTON + "/" + CLICKED;
+    }
+
+    @Override
+    protected void describe(Map<String, String> descriptions) {
+        descriptions.put(INTENT_BUTTON_TEXT, "<String>");
+        descriptions.put(INTENT_TEXTFIELD_TEXT, "<String>");
+        descriptions.put(EVENT_BUTTON_CLICKED, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: true");
+        descriptions.put(STATUS_BUTTON_TEXT, "<String>");
     }
 }

@@ -57,10 +57,7 @@ public class SimpleGUIService extends Application {
         try {
             gatewayClient = new GatewayClient<>(mqttURI, mqttClientName, new SimpleGUIServiceContract(instanceName));
             gatewayClient.connect();
-            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_BUTTON_TEXT, "<String>");
-            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, "<String>");
-            gatewayClient.publishDescription(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: true");
-            gatewayClient.publishDescription(gatewayClient.getContract().STATUS_BUTTON_TEXT, "<String>");
+           
         } catch (MqttException ex) {
             Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
         }

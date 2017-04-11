@@ -30,7 +30,7 @@ public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
     private Set<String> webViewServiceInstances;
 
     public SimpleDiceWebViewServant(URI mqttURI,String instanceName) throws MqttException {
-        super(mqttURI, "ad92f0" + "SimpleDiceServant" + instanceName, new ClientContract("Tutorial/Servant", "WebView", instanceName));
+        super(mqttURI, "ad92f0" + "SimpleDiceServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "WebView", instanceName));
         webViewServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
