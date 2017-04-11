@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gateway.servant.timerDice;
+package ch.quantasy.iot.gateway.servant;
 
 import ch.quantasy.mqtt.gateway.client.ClientContract;
 import java.util.Map;

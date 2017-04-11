@@ -5,7 +5,6 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.iot.gateway.servant.timerDice.SimpleServantContract;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.mqtt.gateway.client.ClientContract;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
