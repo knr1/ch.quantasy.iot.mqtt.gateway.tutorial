@@ -43,7 +43,8 @@ public class SimpleGUIService extends Application {
 
     private GatewayClient<SimpleGUIServiceContract> gatewayClient;
 
-    public SimpleGUIService() {
+    @Override
+    public void init() throws Exception {
         Long timeStamp = System.currentTimeMillis();
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
@@ -58,7 +59,6 @@ public class SimpleGUIService extends Application {
         } catch (MqttException ex) {
             Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public static void main(String... args) {
