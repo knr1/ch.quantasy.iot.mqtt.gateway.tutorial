@@ -48,6 +48,10 @@ public class TimerDiceServant extends GatewayClient<TimerDiceServantContract> {
             }
         });
         subscribe(timerServiceContract.STATUS_CONFIGURATION + "/" + DISCRIMINATOR, (topic, payload) -> {
+            if(payload.length==0){
+                publishStatus(getContract().STATUS_CONFIGURATION,null);
+                return;
+            }
             TimerDiceConfiguration configuration=this.getMapper().readValue(payload, TimerDiceConfiguration.class);
                 publishStatus(getContract().STATUS_CONFIGURATION, configuration);
         });
