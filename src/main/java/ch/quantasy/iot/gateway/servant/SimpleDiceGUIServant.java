@@ -6,7 +6,7 @@
 package ch.quantasy.iot.gateway.servant;
 
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AClientContract;
 import ch.quantasy.mqtt.gateway.client.GCEvent;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;
@@ -22,14 +22,12 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
-
-    
+public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
 
     private SimpleDiceServiceContract simpleDiceServiceContract;
     private Set<String> simpleGUIServiceInstances;
 
-    public SimpleDiceGUIServant(URI mqttURI,String instanceName) throws MqttException {
+    public SimpleDiceGUIServant(URI mqttURI, String instanceName) throws MqttException {
         super(mqttURI, "SimpleDiceGUIServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
@@ -85,7 +83,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
         }
 
     }
-    
+
     private static String computerName;
 
     static {
@@ -106,7 +104,7 @@ public class SimpleDiceGUIServant extends GatewayClient<ClientContract> {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceGUIServant r = new SimpleDiceGUIServant(mqttURI,computerName);
+        SimpleDiceGUIServant r = new SimpleDiceGUIServant(mqttURI, computerName);
 
         System.in.read();
     }

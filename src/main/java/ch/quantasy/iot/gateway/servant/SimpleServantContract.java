@@ -5,14 +5,14 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class SimpleServantContract extends ClientContract {
+public class SimpleServantContract extends AyamlClientContract {
 
     public SimpleServantContract(String rootContext, String baseClass, String instance) {
         super(rootContext, baseClass, instance);

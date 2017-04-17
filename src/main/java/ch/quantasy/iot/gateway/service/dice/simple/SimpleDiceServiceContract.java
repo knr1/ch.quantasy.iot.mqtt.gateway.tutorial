@@ -5,14 +5,14 @@
  */
 package ch.quantasy.iot.gateway.service.dice.simple;
 
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class SimpleDiceServiceContract extends ClientContract {
+public class SimpleDiceServiceContract extends AyamlClientContract {
 
     private final String PLAY;
     private final String SIDES;
