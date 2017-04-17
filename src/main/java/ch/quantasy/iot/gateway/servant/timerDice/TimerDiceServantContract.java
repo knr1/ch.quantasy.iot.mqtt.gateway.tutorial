@@ -5,14 +5,14 @@
  */
 package ch.quantasy.iot.gateway.servant.timerDice;
 
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class TimerDiceServantContract extends ClientContract {
+public class TimerDiceServantContract extends AyamlClientContract {
 
     private final String CONFIGURATION;
     public final String INTENT_CONFIGURATION;

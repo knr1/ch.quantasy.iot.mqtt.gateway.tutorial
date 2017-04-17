@@ -5,7 +5,7 @@
  */
 package ch.quantasy.iot.gateway.service.gui;
 
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author reto
  */
-public class SimpleGUIServiceContract extends ClientContract {
+public class SimpleGUIServiceContract extends AyamlClientContract {
 
     private final String TEXTFIELD;
     private final String TEXT;

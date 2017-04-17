@@ -6,7 +6,7 @@
 package ch.quantasy.iot.gateway.servant;
 
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.mqtt.gateway.client.ClientContract;
+import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mqtt.gateway.client.GCEvent;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class SimpleDiceWebViewServant extends GatewayClient<ClientContract> {
+public class SimpleDiceWebViewServant extends GatewayClient<AyamlClientContract> {
 
     
     private SimpleDiceServiceContract simpleDiceServiceContract;
