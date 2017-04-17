@@ -22,7 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class SimpleDiceWebViewServant extends GatewayClient<AyamlClientContract> {
+public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContract> {
 
     
     private SimpleDiceServiceContract simpleDiceServiceContract;
