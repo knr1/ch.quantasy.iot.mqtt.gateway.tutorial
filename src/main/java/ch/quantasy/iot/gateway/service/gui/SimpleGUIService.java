@@ -43,27 +43,26 @@ public class SimpleGUIService extends Application {
 
     private GatewayClient<SimpleGUIServiceContract> gatewayClient;
 
-    
     public static void main(String... args) {
         launch(args);
     }
 
     @Override
     public void init() throws Exception {
-       Long timeStamp = System.currentTimeMillis();
+        Long timeStamp = System.currentTimeMillis();
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        //URI mqttURI = URI.create("tcp://iot.eclipse.org:1883");
+
         String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
         instanceName = (timeStamp % 10000) + "@" + computerName;
         try {
             gatewayClient = new GatewayClient<>(mqttURI, mqttClientName, new SimpleGUIServiceContract(instanceName));
             gatewayClient.connect();
-           
+
         } catch (MqttException ex) {
             Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 
     @Override
     public void start(Stage stage) {
@@ -73,11 +72,11 @@ public class SimpleGUIService extends Application {
         Button button = new Button();
         button.setText("...");
         gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, "...");
-        
+
         button.setOnAction((ActionEvent event) -> {
             gatewayClient.publishEvent(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "true");
         });
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT+ "/#", (String topic, byte[] payload) -> {
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
                     button.setText(gatewayClient.getMapper().readValue(payload, String.class));
@@ -91,7 +90,7 @@ public class SimpleGUIService extends Application {
 
         TextField textField = new TextField();
         textField.setEditable(false);
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT+ "/#", (String topic, byte[] payload) -> {
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
                     textField.setText(gatewayClient.getMapper().readValue(payload, String.class));
