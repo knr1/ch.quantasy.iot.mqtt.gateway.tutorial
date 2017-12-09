@@ -5,10 +5,9 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
+import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.mqtt.gateway.client.AClientContract;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
-import ch.quantasy.mqtt.gateway.client.GCEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -24,31 +23,27 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContract> {
 
-   
-
     SimpleDiceServiceContract simpleDiceServiceContract;
     private Set<String> webViewServiceInstances;
 
-    public SimpleDiceWebViewServant(URI mqttURI,String instanceName) throws MqttException {
+    public SimpleDiceWebViewServant(URI mqttURI, String instanceName) throws MqttException {
         super(mqttURI, "ad92f0" + "SimpleDiceServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "WebView", instanceName));
         webViewServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
-            GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
-            if (events == null || events.length == 0) {
-                return;
+            Set<PlayEvent> playEvents = super.toMessageSet(payload, PlayEvent.class);
+            for (PlayEvent playEvent : playEvents) {
+                System.out.println("Play: " + playEvent);
             }
-
-            System.out.println("Play: " + events[0]);
             webViewServiceInstances.forEach((instance) -> {
                 System.out.println(instance);
-                super.publishIntent(instance + "/I/text", new PlayState("1", "" + events[0].getValue()));
+          //      super.publishIntent(instance + "/I", new PlayState("1", "" + events[0].getValue()));
             });
 
         });
         subscribe("Tutorial/WebView/+/E/button", (topic, payload) -> {
-            publishIntent(simpleDiceServiceContract.INTENT_PLAY, "true");
+       //     publishIntent(simpleDiceServiceContract.INTENT_PLAY, "true");
         });
 
         subscribe("Tutorial/WebView/+/S/connection", (topic, payload) -> {
@@ -87,9 +82,8 @@ public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContrac
         }
 
     }
-    
-    
-     private static String computerName;
+
+    private static String computerName;
 
     static {
         try {

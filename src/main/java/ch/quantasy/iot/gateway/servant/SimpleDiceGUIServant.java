@@ -5,10 +5,14 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
+import ch.quantasy.iot.gateway.service.dice.simple.DiceIntent;
+import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.mqtt.gateway.client.AClientContract;
-import ch.quantasy.mqtt.gateway.client.GCEvent;
+import ch.quantasy.iot.gateway.service.gui.SimpleGUIServiceContract;
+import ch.quantasy.iot.gateway.service.gui.UIIntent;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
+import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
+import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -25,24 +29,32 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
 
     private SimpleDiceServiceContract simpleDiceServiceContract;
-    private Set<String> simpleGUIServiceInstances;
+    private Set<SimpleGUIServiceContract> simpleGUIServiceInstances;
+
+    private final MessageCollector collector;
+    private PublishingMessageCollector<SimpleServantContract> publishingCollector;
 
     public SimpleDiceGUIServant(URI mqttURI, String instanceName) throws MqttException {
         super(mqttURI, "SimpleDiceGUIServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
+        collector = new MessageCollector();
+        publishingCollector = new PublishingMessageCollector(collector, this);
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
 
-        subscribe("Tutorial/SimpleGUI/+/S/connection", (topic, payload) -> {
+        subscribe("Tutorial/SimpleGUI/U/+/S/connection", (topic, payload) -> {
             String status = super.getMapper().readValue(payload, String.class);
-            String simpleGUIServiceInstance = topic.replaceFirst("/S/connection", "");
+            String simpleGUIServiceInstance = topic.replaceFirst("Tutorial/SimpleGUI/U/", "").replaceFirst("/S/connection", "");
             System.out.println(simpleGUIServiceInstance + " " + status);
+            SimpleGUIServiceContract simpleGUIServiceContract = new SimpleGUIServiceContract(simpleGUIServiceInstance);
 
             if (status.equals("online")) {
-                super.publishIntent(simpleGUIServiceInstance + "/I/button/text", "play");
-                simpleGUIServiceInstances.add(simpleGUIServiceInstance);
-                super.subscribe(simpleGUIServiceInstance + "/E/button/clicked", (eventTopic, eventPayload) -> {
-                    super.publishIntent(simpleDiceServiceContract.INTENT_PLAY, true);
+                UIIntent uiIntent = new UIIntent();
+                uiIntent.buttonText = "play";
+                publishingCollector.readyToPublish(simpleGUIServiceContract.INTENT, uiIntent);
+                simpleGUIServiceInstances.add(simpleGUIServiceContract);
+                super.subscribe(simpleGUIServiceContract.EVENT_BUTTON_CLICKED, (eventTopic, eventPayload) -> {
+                    publishingCollector.readyToPublish(simpleDiceServiceContract.INTENT, new DiceIntent(true));
                 });
             } else {
                 simpleGUIServiceInstances.remove(simpleGUIServiceInstance);
@@ -50,38 +62,15 @@ public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
         });
 
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
-            GCEvent<Integer>[] events = super.toEventArray(payload, Integer.class);
-            if (events == null || events.length == 0) {
-                return;
+            Set<PlayEvent> playEvents = super.toMessageSet(payload, PlayEvent.class);
+            for (PlayEvent playEvent : playEvents) {
+                simpleGUIServiceInstances.forEach((instance) -> {
+                    UIIntent uiIntent = new UIIntent();
+                    uiIntent.textFieldText = "" + playEvent.chosenSide;
+                    publishingCollector.readyToPublish(instance.INTENT, uiIntent);
+                });
             }
-            simpleGUIServiceInstances.forEach((instance) -> {
-                super.publishIntent(instance + "/I/textField/text", events[0].getValue());
-            });
-
         });
-    }
-
-    static class PlayState {
-
-        private String id;
-        private String content;
-
-        private PlayState() {
-        }
-
-        public PlayState(String id, String content) {
-            this.id = id;
-            this.content = content;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public String getId() {
-            return id;
-        }
-
     }
 
     private static String computerName;

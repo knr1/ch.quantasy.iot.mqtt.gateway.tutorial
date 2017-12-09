@@ -6,9 +6,10 @@
 package ch.quantasy.iot.gateway.service.gui;
 
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
-import java.io.IOException;
+import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -71,32 +72,34 @@ public class SimpleGUIService extends Application {
 
         Button button = new Button();
         button.setText("...");
-        gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, "...");
-
-        button.setOnAction((ActionEvent event) -> {
-            gatewayClient.publishEvent(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "true");
-        });
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT + "/#", (String topic, byte[] payload) -> {
-            Platform.runLater(() -> {
-                try {
-                    button.setText(gatewayClient.getMapper().readValue(payload, String.class));
-                } catch (IOException ex) {
-                    Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, button.getText());
-
-            });
-        });
-
         TextField textField = new TextField();
         textField.setEditable(false);
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT + "/#", (String topic, byte[] payload) -> {
+        gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+        gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+
+        button.setOnAction((ActionEvent event) -> {
+            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().EVENT_BUTTON_CLICKED, new ButtonClickedEvent(true));
+        });
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
-                    textField.setText(gatewayClient.getMapper().readValue(payload, String.class));
-                } catch (IOException ex) {
+                    MessageCollector collector=new MessageCollector();
+                    Set<UIIntent> uiIntents = gatewayClient.toMessageSet(payload, UIIntent.class);
+                    collector.add(topic, uiIntents);
+                    for (UIIntent intent : uiIntents) {
+                        if (intent.buttonText != null) {
+                            button.setText(intent.buttonText);
+                            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+                        }
+                        if (intent.textFieldText != null) {
+                            textField.setText(intent.textFieldText);
+                            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+                        }
+                    }
+                } catch (Exception ex) {
                     Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             });
         });
 

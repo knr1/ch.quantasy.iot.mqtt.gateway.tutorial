@@ -5,18 +5,16 @@
  */
 package ch.quantasy.iot.gateway.service.dice.simple;
 
-import ch.quantasy.mqtt.gateway.client.AyamlClientContract;
-import java.util.Map;
+import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
 
 /**
  *
  * @author reto
  */
-public class SimpleDiceServiceContract extends AyamlClientContract {
+public class SimpleDiceServiceContract extends AyamlServiceContract {
 
     private final String PLAY;
     private final String SIDES;
-    public final String INTENT_PLAY;
     public final String STATUS_SIDES;
     public final String EVENT_PLAY;
 
@@ -26,16 +24,10 @@ public class SimpleDiceServiceContract extends AyamlClientContract {
         PLAY = "play";
         SIDES = "sides";
 
-        INTENT_PLAY = INTENT + "/" + PLAY;
         STATUS_SIDES = STATUS + "/" + SIDES;
         EVENT_PLAY = EVENT + "/" + PLAY;
+        addMessageTopic(EVENT_PLAY, PlayEvent.class);
+        addMessageTopic(STATUS_SIDES, DiceStatus.class);
+        addMessageTopic(INTENT, DiceIntent.class);
     }
-
-    @Override
-    protected void describe(Map<String, String> descriptions) {
-        descriptions.put(EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");
-        descriptions.put(STATUS_SIDES, "[1.." + Integer.MAX_VALUE + "]");
-        descriptions.put(INTENT_PLAY, "true");
-    }
-
 }

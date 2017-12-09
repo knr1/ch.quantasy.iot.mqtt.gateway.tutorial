@@ -7,7 +7,10 @@ package ch.quantasy.iot.gateway.service.dice.simple;
 
 import ch.quantasy.iot.dice.simple.SimpleDice;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
+import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
+import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
 import java.net.URI;
+import java.util.Set;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
@@ -22,16 +25,16 @@ public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> 
         super(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();
         connect();
-        subscribe(getContract().INTENT_PLAY + "/#", (topic, payload) -> {
-            Boolean playing = getMapper().readValue(payload, Boolean.class);
-            if (playing!=null && playing) {
+        subscribe(getContract().INTENT + "/#", (topic, payload) -> {
+            Set<DiceIntent> intents = super.toMessageSet(payload, DiceIntent.class);
+            intents.stream().filter((intent) -> (intent.play == true)).map((_item) -> {
                 dice.play();
-                publishEvent(getContract().EVENT_PLAY, dice.getChosenSide());
-            }
+                return _item;
+            }).forEachOrdered((_item) -> {
+                getPublishingCollector().readyToPublish(getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
+            });
         });
-
-       
-        publishStatus(getContract().STATUS_SIDES, dice.getAmountOfSides());
+        getPublishingCollector().readyToPublish(getContract().STATUS_SIDES, new DiceStatus(dice.getAmountOfSides()));
 
     }
 
