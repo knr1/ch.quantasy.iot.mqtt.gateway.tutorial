@@ -10,6 +10,7 @@ import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.iot.gateway.service.gui.SimpleGUIServiceContract;
 import ch.quantasy.iot.gateway.service.gui.UIIntent;
+import ch.quantasy.mqtt.gateway.client.ConnectionStatus;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
 import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
@@ -18,6 +19,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -43,7 +45,7 @@ public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
 
         subscribe("Tutorial/SimpleGUI/U/+/S/connection", (topic, payload) -> {
-            String status = super.getMapper().readValue(payload, String.class);
+            ConnectionStatus status = new TreeSet<>(toMessageSet(payload, ConnectionStatus.class)).last();
             String simpleGUIServiceInstance = topic.replaceFirst("Tutorial/SimpleGUI/U/", "").replaceFirst("/S/connection", "");
             System.out.println(simpleGUIServiceInstance + " " + status);
             SimpleGUIServiceContract simpleGUIServiceContract = new SimpleGUIServiceContract(simpleGUIServiceInstance);
