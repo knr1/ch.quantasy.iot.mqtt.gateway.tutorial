@@ -6,7 +6,6 @@
 package ch.quantasy.iot.gateway.service.gui;
 
 import ch.quantasy.mqtt.gateway.client.message.AnIntent;
-import ch.quantasy.mqtt.gateway.client.message.annotations.NonNull;
 import ch.quantasy.mqtt.gateway.client.message.annotations.Nullable;
 import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
 

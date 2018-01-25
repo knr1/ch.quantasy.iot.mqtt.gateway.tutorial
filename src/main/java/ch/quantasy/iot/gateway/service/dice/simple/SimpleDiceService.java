@@ -7,8 +7,6 @@ package ch.quantasy.iot.gateway.service.dice.simple;
 
 import ch.quantasy.iot.dice.simple.SimpleDice;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
-import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
-import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
 import java.net.URI;
 import java.util.Set;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -17,24 +15,25 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> {
+public class SimpleDiceService {
 
     private final SimpleDice dice;
+    private final GatewayClient<SimpleDiceServiceContract> gatewayClient;
 
     public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName) throws MqttException {
-        super(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
+        gatewayClient=new GatewayClient<>(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();
-        connect();
-        subscribe(getContract().INTENT + "/#", (topic, payload) -> {
-            Set<DiceIntent> intents = super.toMessageSet(payload, DiceIntent.class);
+        gatewayClient.connect();
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/", (topic, payload) -> {
+            Set<DiceIntent> intents = gatewayClient.toMessageSet(payload, DiceIntent.class);
             intents.stream().filter((intent) -> (intent.play == true)).map((_item) -> {
                 dice.play();
                 return _item;
             }).forEachOrdered((_item) -> {
-                getPublishingCollector().readyToPublish(getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
+                gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
             });
         });
-        getPublishingCollector().readyToPublish(getContract().STATUS_SIDES, new DiceStatus(dice.getAmountOfSides()));
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_SIDES, new DiceStatus(dice.getAmountOfSides()));
 
     }
 

@@ -74,11 +74,11 @@ public class SimpleGUIService extends Application {
         button.setText("...");
         TextField textField = new TextField();
         textField.setEditable(false);
-        gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
-        gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
 
         button.setOnAction((ActionEvent event) -> {
-            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().EVENT_BUTTON_CLICKED, new ButtonClickedEvent(true));
+            gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_BUTTON_CLICKED, new ButtonClickedEvent(true));
         });
         gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
@@ -89,11 +89,11 @@ public class SimpleGUIService extends Application {
                     for (UIIntent intent : uiIntents) {
                         if (intent.buttonText != null) {
                             button.setText(intent.buttonText);
-                            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+                            gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
                         }
                         if (intent.textFieldText != null) {
                             textField.setText(intent.textFieldText);
-                            gatewayClient.getPublishingCollector().readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+                            gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
                         }
                     }
                 } catch (Exception ex) {

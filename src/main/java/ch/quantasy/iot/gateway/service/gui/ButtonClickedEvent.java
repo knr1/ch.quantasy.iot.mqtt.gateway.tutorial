@@ -5,16 +5,14 @@
  */
 package ch.quantasy.iot.gateway.service.gui;
 
-import ch.quantasy.iot.gateway.service.dice.simple.*;
 import ch.quantasy.mqtt.gateway.client.message.AnEvent;
-import ch.quantasy.mqtt.gateway.client.message.annotations.Range;
 
 /**
  *
  * @author reto
  */
 public class ButtonClickedEvent extends AnEvent {
-    boolean clicked;
+    public boolean clicked;
 
     public ButtonClickedEvent(boolean clicked) {
         this.clicked = clicked;
