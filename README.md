@@ -447,13 +447,13 @@ public class ButtonTextStatus extends AStatus {
 
 ### How to access the new Micro-Service
 Now, you can choose your favorite programming language / environment (Node-Red works fine as well) and can access the Micro-Service...
-Sending a <string> such as "Play" to the intent-topic: 
+Sending a <string> such as "buttonText: Play" to the intent-topic: 
 
 ```
-Tutorial/SimpleGUI/<instance>/I/button/text
+Tutorial/SimpleGUI/<instance>/I
 ```
 
-... will give the button of the service a name.
+... will give the button of the service the name 'Play'.
 
 Sending a <string> such as "textFieldText: helloWorld" to the intent-topic: 
 
