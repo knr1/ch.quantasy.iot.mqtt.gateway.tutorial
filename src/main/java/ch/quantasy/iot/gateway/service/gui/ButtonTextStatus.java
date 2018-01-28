@@ -21,6 +21,5 @@ public class ButtonTextStatus extends AStatus {
     }
 
     private ButtonTextStatus() {
-    }
-    
+    }   
 }

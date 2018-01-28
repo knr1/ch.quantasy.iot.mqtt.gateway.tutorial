@@ -63,38 +63,38 @@ public class SimpleDice {
 In a second step, a second program provides the micro-service abilities:
 
 ```java
-public class SimpleDiceService extends GatewayClient<SimpleDiceServiceContract> {
+public class SimpleDiceService {
 
     private final SimpleDice dice;
+    private final GatewayClient<SimpleDiceServiceContract> gatewayClient;
 
-    public SimpleDiceService(URI mqttURI, String mqttClientName, String serviceInstanceName) throws MqttException {
-        super(mqttURI, mqttClientName, new SimpleDiceServiceContract(serviceInstanceName));
+    public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName) throws MqttException {
+        gatewayClient=new GatewayClient<>(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();
-        connect();
-        subscribe(getContract().INTENT_PLAY + "/#", (topic, payload) -> {
-            dice.play();
-            publishEvent(getContract().EVENT_PLAY, dice.getChosenSide());
-
+        gatewayClient.connect();
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/", (topic, payload) -> {
+            Set<DiceIntent> intents = gatewayClient.toMessageSet(payload, DiceIntent.class);
+            intents.stream().filter((intent) -> (intent.play == true)).map((_item) -> {
+                dice.play();
+                return _item;
+            }).forEachOrdered((_item) -> {
+                gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
+            });
         });
-
-        publishDescription(getContract().EVENT_PLAY, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: [1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().STATUS_SIDES, "[1.." + Integer.MAX_VALUE + "]");
-        publishDescription(getContract().INTENT_PLAY, "true");
-
-        publishStatus(getContract().STATUS_SIDES, dice.getAmountOfSides());
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_SIDES, new DiceStatus(dice.getAmountOfSides()));
 
     }
+
+}
 ```
 
-The missing class is the Contract itself. Here it is:
+The missing class is the contract itself. Here it is:
 
 ```java
-public class SimpleDiceServiceContract extends ClientContract {
+public class SimpleDiceServiceContract extends AyamlServiceContract {
 
     private final String PLAY;
     private final String SIDES;
-    public final String INTENT_PLAY;
-    public final String INTENT_SIDES;
     public final String STATUS_SIDES;
     public final String EVENT_PLAY;
 
@@ -104,14 +104,61 @@ public class SimpleDiceServiceContract extends ClientContract {
         PLAY = "play";
         SIDES = "sides";
 
-        INTENT_PLAY = INTENT + "/" + PLAY;
-        INTENT_SIDES = INTENT + "/" + SIDES;
         STATUS_SIDES = STATUS + "/" + SIDES;
         EVENT_PLAY = EVENT + "/" + PLAY;
+        addMessageTopic(EVENT_PLAY, PlayEvent.class);
+        addMessageTopic(STATUS_SIDES, DiceStatus.class);
+        addMessageTopic(INTENT, DiceIntent.class);
     }
-
 }
 ``` 
+
+As one can see, there are some data structures that are sent back and forth in 
+form of a structured document (in our case in YAML notation). Using MQTTGateway as
+helper, the developer uses an extension of a Message class (i.e. AnIntent, AnEvent, AStatus), that helps building the document.
+
+```java
+public class DiceIntent extends AnIntent{
+    public boolean play;
+    
+    public DiceIntent(boolean play) {
+        this.play = play;
+    }
+
+    private DiceIntent() {
+    }
+    
+}
+```
+
+```java
+public class DiceStatus extends AStatus{
+    public int sides;
+
+    public DiceStatus(int sides) {
+        this.sides = sides;
+    }
+
+    private DiceStatus() {
+    }
+    
+}
+```
+
+```java
+public class PlayEvent extends AnEvent {
+    @Range(from = 1, to =6)
+    public int chosenSide;
+
+    public PlayEvent(int chosenSide) {
+        this.chosenSide = chosenSide;
+    }
+
+    private PlayEvent() {
+    }
+    
+}
+```
 
 ### Start of the Micro-Service
 Now what?!
@@ -149,10 +196,10 @@ public class TuMQWay {
 ```
 ### How to access the new Micro-Service
 Now, you can choose your favorite programming language / environment (Node-Red works fine as well) and can access the Micro-Service...
-Sending a 'true' to the intent-topic: 
+Sending a 'play: true' to the intent-topic: 
 
 ```
-Tutorial/SimpleDice/<computerName>/I/play
+Tutorial/SimpleDice/<computerName>/I
 ```
 
 ... will make the service work.
@@ -162,14 +209,12 @@ When the service has done something, it will respond on the event-topic:
 Tutorial/SimpleDice/<computerName>/E/play
 ```
 
-Go ahead and subscribe on that topic! (Remember: All events are always sent within an array.)
+Go ahead and subscribe on that topic! (Remember: All messages might be sent within an array.)
 
 If you want to know the status of the micro-service subscribe to the following status-topic:
 ```
 Tutorial/SimpleDice/<computerName>/S/#
 ```
-
-You will always receive the latest status the micro-service is operating in.
 
 
 The following diagram gives the overview of what has just been done:
@@ -235,8 +280,7 @@ public class SimpleGUIService extends Application {
 ```
 
 ### Micro-Service logic (Presenter)
-This time, the 'presenter' logic is put into the same class. As this class
-already extends 'Application', the convenience class GatewayClient is aggregated as 
+This time, the 'presenter' logic is put into the same class. Again, the convenience class GatewayClient is aggregated as 
 a uses relation-ship. Here is the complete class for the SimpleGUI:
 ```java
 public class SimpleGUIService extends Application {
@@ -255,26 +299,25 @@ public class SimpleGUIService extends Application {
 
     private GatewayClient<SimpleGUIServiceContract> gatewayClient;
 
-    public SimpleGUIService() {
+    public static void main(String... args) {
+        launch(args);
+    }
+
+    @Override
+    public void init() throws Exception {
         Long timeStamp = System.currentTimeMillis();
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        //URI mqttURI = URI.create("tcp://iot.eclipse.org:1883");
+
         String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
         instanceName = (timeStamp % 10000) + "@" + computerName;
         try {
             gatewayClient = new GatewayClient<>(mqttURI, mqttClientName, new SimpleGUIServiceContract(instanceName));
             gatewayClient.connect();
-            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_BUTTON_TEXT, "<String>");
-            gatewayClient.publishDescription(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, "<String>");
-            gatewayClient.publishDescription(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "timestamp: [0.." + Long.MAX_VALUE + "]\n value: true");
-            gatewayClient.publishDescription(gatewayClient.getContract().STATUS_BUTTON_TEXT, "<String>");
+
         } catch (MqttException ex) {
             Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     @Override
@@ -284,32 +327,34 @@ public class SimpleGUIService extends Application {
 
         Button button = new Button();
         button.setText("...");
-        gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, "...");
-        
-        button.setOnAction((ActionEvent event) -> {
-            gatewayClient.publishEvent(gatewayClient.getContract().EVENT_BUTTON_CLICKED, "true");
-        });
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_BUTTON_TEXT, (String topic, byte[] payload) -> {
-            Platform.runLater(() -> {
-                try {
-                    button.setText(gatewayClient.getMapper().readValue(payload, String.class));
-                } catch (IOException ex) {
-                    Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                gatewayClient.publishStatus(gatewayClient.getContract().STATUS_BUTTON_TEXT, button.getText());
-
-            });
-        });
-
         TextField textField = new TextField();
         textField.setEditable(false);
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT_TEXTFIELD_TEXT, (String topic, byte[] payload) -> {
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+        gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+
+        button.setOnAction((ActionEvent event) -> {
+            gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_BUTTON_CLICKED, new ButtonClickedEvent(true));
+        });
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
-                    textField.setText(gatewayClient.getMapper().readValue(payload, String.class));
-                } catch (IOException ex) {
+                    MessageCollector collector=new MessageCollector();
+                    Set<UIIntent> uiIntents = gatewayClient.toMessageSet(payload, UIIntent.class);
+                    collector.add(topic, uiIntents);
+                    for (UIIntent intent : uiIntents) {
+                        if (intent.buttonText != null) {
+                            button.setText(intent.buttonText);
+                            gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_BUTTON_TEXT, new ButtonTextStatus(button.getText()));
+                        }
+                        if (intent.textFieldText != null) {
+                            textField.setText(intent.textFieldText);
+                            gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_TEXTFIELD_TEXT, new TextFieldTextStatus(textField.getText()));
+                        }
+                    }
+                } catch (Exception ex) {
                     Logger.getLogger(SimpleGUIService.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             });
         });
 
@@ -327,15 +372,14 @@ public class SimpleGUIService extends Application {
 The missing class is the Contract itself. Here it is:
 
 ```java
-public class SimpleGUIServiceContract extends ClientContract {
+public class SimpleGUIServiceContract extends AyamlServiceContract {
 
     private final String TEXTFIELD;
     private final String TEXT;
-    public final String INTENT_BUTTON_TEXT;
     public final String STATUS_BUTTON_TEXT;
+    public final String STATUS_TEXTFIELD_TEXT;
     private final String BUTTON;
     private final String CLICKED;
-    public final String INTENT_TEXTFIELD_TEXT;
     public final String EVENT_BUTTON_CLICKED;
 
     public SimpleGUIServiceContract(String instanceID) {
@@ -345,15 +389,60 @@ public class SimpleGUIServiceContract extends ClientContract {
         TEXT = "text";
         BUTTON = "button";
         CLICKED = "clicked";
-
-        INTENT_BUTTON_TEXT = INTENT + "/" + BUTTON + "/" + TEXT;
+        STATUS_TEXTFIELD_TEXT = STATUS + "/" + TEXTFIELD + "/" + TEXT;
         STATUS_BUTTON_TEXT = STATUS + "/" + BUTTON + "/" + TEXT;
-        INTENT_TEXTFIELD_TEXT = INTENT + "/" + TEXTFIELD + "/" + TEXT;
         EVENT_BUTTON_CLICKED = EVENT + "/" + BUTTON + "/" + CLICKED;
+        addMessageTopic(INTENT, UIIntent.class);
+        addMessageTopic(EVENT_BUTTON_CLICKED, ButtonClickedEvent.class);
+        addMessageTopic(STATUS_BUTTON_TEXT, ButtonTextStatus.class);
+        addMessageTopic(STATUS_TEXTFIELD_TEXT, TextFieldTextStatus.class);
     }
 }
 ```
-Any language can be used! Here a simple Java-Client has been produced.
+Any language can be used! Here a simple Java-Client has been produced. In order to
+provide the correct data structures sent and read as yaml-document, the java-implementation
+of the MQTTGateway provide the possibility to provide the document as an extension of
+Message.java (i.e. AnIntent.class, AnEvent.class, AStatus.class):
+
+
+```java
+public class UIIntent extends AnIntent{
+    @Nullable
+    @StringForm
+    public String buttonText;
+    @Nullable
+    @StringForm
+    public String textFieldText;      
+}
+```
+
+```java
+public class ButtonClickedEvent extends AnEvent {
+    public boolean clicked;
+
+    public ButtonClickedEvent(boolean clicked) {
+        this.clicked = clicked;
+    }
+
+    private ButtonClickedEvent() {
+    }  
+}
+```
+
+```java
+public class ButtonTextStatus extends AStatus {
+    @StringForm
+    public String text;
+
+    public ButtonTextStatus(String text) {
+        this.text = text;
+    }
+
+    private ButtonTextStatus() {
+    }   
+}
+```
+
 
 
 ### How to access the new Micro-Service
@@ -366,13 +455,13 @@ Tutorial/SimpleGUI/<instance>/I/button/text
 
 ... will give the button of the service a name.
 
-Sending a <string> such as "helloWorld" to the intent-topic: 
+Sending a <string> such as "textFieldText: helloWorld" to the intent-topic: 
 
 ```
-Tutorial/SimpleGUI/<instance>/I/textField/text
+Tutorial/SimpleGUI/<instance>/I
 ```
 
-... will write into the textField of the service.
+... will write 'helloWorld' into the textField of the service.
 
 When the button of the service has been clicked, it will respond on the event-topic:
 ```

@@ -19,7 +19,5 @@ public class ButtonClickedEvent extends AnEvent {
     }
 
     private ButtonClickedEvent() {
-    }
-
-    
+    }  
 }
