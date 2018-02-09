@@ -18,4 +18,9 @@ public class SimpleServantContract extends AyamlServiceContract {
         super(rootContext, baseClass, instance);
     }
 
+    @Override
+    public void setMessageTopics(Map messageTopicMap) {
+        //None
+    }
+
 }
