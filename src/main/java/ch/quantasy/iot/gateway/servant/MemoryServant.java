@@ -5,6 +5,7 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
+import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadService;
 import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadServiceContract;
 import ch.quantasy.iot.gateway.service.memory.MemoryUsageServiceContract;
 import ch.quantasy.iot.memory.PhysicalMemory;
@@ -13,6 +14,9 @@ import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mqtt.gateway.client.GCEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
@@ -21,6 +25,15 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class MemoryServant extends GatewayClient<ClientContract> {
 
+    public static String computerName;
+    static {
+        try {
+            computerName = java.net.InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(CPULoadService.class.getName()).log(Level.SEVERE, null, ex);
+            computerName = "undefined";
+        }
+    }
     MemoryUsageServiceContract memServiceContract;
     CPULoadServiceContract cpuServiceContract;
 
