@@ -2,10 +2,10 @@
 HeaderColumnWidths=546,112,154,223,177,137,112,131
 PreviewsShown=true
 SortRole=type
-Timestamp=2017,3,29,11,40,13
-Version=3
+Timestamp=2018,2,4,11,41,35
+Version=4
 ViewMode=1
-VisibleRoles=Details_text,Details_size,Details_date,Details_type,Details_destination,Details_permissions,Details_owner,Details_group,CustomizedDetails
+VisibleRoles=Details_text,Details_size,Details_modificationtime,Details_type,Details_destination,Details_permissions,Details_owner,Details_group,CustomizedDetails
 
 [Settings]
 HiddenFilesShown=true
