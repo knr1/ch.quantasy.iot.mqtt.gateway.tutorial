@@ -24,7 +24,7 @@ public class SimpleDiceService {
         gatewayClient=new GatewayClient<>(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
         dice = new SimpleDice();
         gatewayClient.connect();
-        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/", (topic, payload) -> {
+        gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (topic, payload) -> {
             Set<DiceIntent> intents = gatewayClient.toMessageSet(payload, DiceIntent.class);
             intents.stream().filter((intent) -> (intent.play == true)).map((_item) -> {
                 dice.play();

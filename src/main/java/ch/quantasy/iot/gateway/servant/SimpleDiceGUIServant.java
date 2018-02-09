@@ -33,30 +33,25 @@ public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
     private SimpleDiceServiceContract simpleDiceServiceContract;
     private Set<SimpleGUIServiceContract> simpleGUIServiceInstances;
 
-    private final MessageCollector collector;
-    private PublishingMessageCollector<SimpleServantContract> publishingCollector;
-
     public SimpleDiceGUIServant(URI mqttURI, String instanceName) throws MqttException {
         super(mqttURI, "SimpleDiceGUIServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "SimpleDiceGUI", instanceName));
-        collector = new MessageCollector();
-        publishingCollector = new PublishingMessageCollector(collector, this);
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
 
         subscribe("Tutorial/SimpleGUI/U/+/S/connection", (topic, payload) -> {
-            ConnectionStatus status = new TreeSet<>(toMessageSet(payload, ConnectionStatus.class)).last();
+            System.out.println("Payload: "+new String(payload));
+            ConnectionStatus status = toMessageSet(payload, ConnectionStatus.class).last();
             String simpleGUIServiceInstance = topic.replaceFirst("Tutorial/SimpleGUI/U/", "").replaceFirst("/S/connection", "");
-            System.out.println(simpleGUIServiceInstance + " " + status);
             SimpleGUIServiceContract simpleGUIServiceContract = new SimpleGUIServiceContract(simpleGUIServiceInstance);
 
-            if (status.equals("online")) {
+            if (status.value.equals("online")) {
                 UIIntent uiIntent = new UIIntent();
                 uiIntent.buttonText = "play";
-                publishingCollector.readyToPublish(simpleGUIServiceContract.INTENT, uiIntent);
+                readyToPublish(simpleGUIServiceContract.INTENT, uiIntent);
                 simpleGUIServiceInstances.add(simpleGUIServiceContract);
                 super.subscribe(simpleGUIServiceContract.EVENT_BUTTON_CLICKED, (eventTopic, eventPayload) -> {
-                    publishingCollector.readyToPublish(simpleDiceServiceContract.INTENT, new DiceIntent(true));
+                    readyToPublish(simpleDiceServiceContract.INTENT, new DiceIntent(true));
                 });
             } else {
                 simpleGUIServiceInstances.remove(simpleGUIServiceInstance);
@@ -69,7 +64,7 @@ public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
                 simpleGUIServiceInstances.forEach((instance) -> {
                     UIIntent uiIntent = new UIIntent();
                     uiIntent.textFieldText = "" + playEvent.chosenSide;
-                    publishingCollector.readyToPublish(instance.INTENT, uiIntent);
+                    readyToPublish(instance.INTENT, uiIntent);
                 });
             }
         });

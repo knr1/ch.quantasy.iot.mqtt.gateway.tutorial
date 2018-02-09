@@ -6,6 +6,7 @@
 package ch.quantasy.iot.gateway.service.gui;
 
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
+import ch.quantasy.mqtt.gateway.client.message.Message;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class SimpleGUIServiceContract extends AyamlServiceContract {
     }
 
     @Override
-    public void setMessageTopics(Map messageTopicMap) {
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
         messageTopicMap.put(INTENT, UIIntent.class);
         messageTopicMap.put(EVENT_BUTTON_CLICKED, ButtonClickedEvent.class);
         messageTopicMap.put(STATUS_BUTTON_TEXT, ButtonTextStatus.class);

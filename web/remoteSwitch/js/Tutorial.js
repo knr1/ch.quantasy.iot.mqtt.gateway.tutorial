@@ -26,9 +26,9 @@ $(window).on("load", function () {
 
     document.addEventListener('visibilitychange', onVisibilityChanged);
     //Sorry for the bad 'Descriptions', but the json2yaml converter is not that great. Needs improvement!
-    sendDescription("intent/text", {"id": "text", "content": "text"});
-    sendDescription("status/visibility", {"state": "visible hidden"});
-    sendDescription("event/button", {"timestamp": "[0..]", "value": {"buttonId": "text", "action": "clicked"}});
+    sendDescription("I", {"id": "text", "content": "text"});
+    sendDescription("S/visibility", {"state": "visible hidden"});
+    sendDescription("E/button", {"timestamp": "[0..]", "value": {"buttonId": "text", "action": "clicked"}});
 
 });
 
@@ -44,14 +44,13 @@ function onIntent(message) {
     var payload = message.payloadObject;
 
     console.log("Topic=" + topic + ", payload=" + payload);
-    if (testTopic(topic, "text")) {
-        for (var i = 0; i < texts.length; i++) {
-            var text = texts[i];
-            var textID = text.getAttribute("textId");
-            if (textID === payload.id) {
-                content = payload.content;
-                text.textContent = content;
-            }
+    console.log("payload[payload.length-1].id="+payload[payload.length-1].id);
+    for (var i = 0; i < texts.length; i++) {
+        var text = texts[i];
+        var textID = text.getAttribute("textId");
+        if (textID === (payload[payload.length-1].id)) {
+            content = payload[payload.length-1].content;
+            text.textContent = content;
         }
     }
 }

@@ -5,6 +5,7 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
+import ch.quantasy.iot.gateway.service.dice.simple.DiceIntent;
 import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.mqtt.gateway.client.ConnectionStatus;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,54 +36,32 @@ public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContrac
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
         subscribe(simpleDiceServiceContract.EVENT_PLAY, (topic, payload) -> {
-            Set<PlayEvent> playEvents = super.toMessageSet(payload, PlayEvent.class);
+            System.out.println("----------");
+            SortedSet<PlayEvent> playEvents = super.toMessageSet(payload, PlayEvent.class);
             for (PlayEvent playEvent : playEvents) {
                 System.out.println("Play: " + playEvent);
             }
             webViewServiceInstances.forEach((instance) -> {
                 System.out.println(instance);
-          //      super.publishIntent(instance + "/I", new PlayState("1", "" + events[0].getValue()));
+                readyToPublish(instance+"/I", new PlayStateIntent("1", "" + playEvents.last().chosenSide));
             });
 
         });
         subscribe("Tutorial/WebView/+/E/button", (topic, payload) -> {
-       //     publishIntent(simpleDiceServiceContract.INTENT_PLAY, "true");
+                 readyToPublish(simpleDiceServiceContract.INTENT, new DiceIntent(true));
         });
 
         subscribe("Tutorial/WebView/+/S/connection", (topic, payload) -> {
             ConnectionStatus status = new TreeSet<>(toMessageSet(payload, ConnectionStatus.class)).last();
-            String simpleGUIServiceInstance = topic.replaceFirst("/S/connection", "");
-            System.out.println(simpleGUIServiceInstance + " " + status);
+            String webViewServiceInstance = topic.replaceFirst("/S/connection", "");
+            System.out.println(webViewServiceInstance + " " + status);
 
-            if (status.equals("online")) {
-                webViewServiceInstances.add(simpleGUIServiceInstance);
+            if (status.value.equals("online")) {
+                webViewServiceInstances.add(webViewServiceInstance);
             } else {
-                webViewServiceInstances.remove(simpleGUIServiceInstance);
+                webViewServiceInstances.remove(webViewServiceInstance);
             }
         });
-
-    }
-
-    static class PlayState {
-
-        private String id;
-        private String content;
-
-        private PlayState() {
-        }
-
-        public PlayState(String id, String content) {
-            this.id = id;
-            this.content = content;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public String getId() {
-            return id;
-        }
 
     }
 

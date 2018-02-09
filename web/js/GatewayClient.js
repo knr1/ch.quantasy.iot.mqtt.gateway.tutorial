@@ -35,7 +35,7 @@ function MQTTconnect() {
     mqtt.connect(options, {
         will: {
             topic: instanceTopic + "/S/connection",
-            payload: 'offline'
+            payload: 'value: offline'
         }
     });
     
@@ -44,7 +44,7 @@ function MQTTconnect() {
 
 
 function onConnect() {
-    message = new Paho.MQTT.Message("online");
+    message = new Paho.MQTT.Message("value: online");
     message.destinationName = instanceTopic + "/S/connection";
     message.retained = true;
     mqtt.send(message);
@@ -112,7 +112,7 @@ $(document).ready(function () {
     MQTTconnect();
 });
 $(window).on("beforeunload", function () {
-    message = new Paho.MQTT.Message("offline");
+    message = new Paho.MQTT.Message("value: offline");
     message.destinationName = instanceTopic + "/S/connection";
     message.retained = true;
     mqtt.send(message);

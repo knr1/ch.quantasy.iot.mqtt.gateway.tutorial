@@ -6,6 +6,7 @@
 package ch.quantasy.iot.gateway.service.dice.simple;
 
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
+import ch.quantasy.mqtt.gateway.client.message.Message;
 import java.util.Map;
 
 /**
@@ -30,7 +31,7 @@ public class SimpleDiceServiceContract extends AyamlServiceContract {
     }
 
     @Override
-    public void setMessageTopics(Map messageTopicMap) {
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
         messageTopicMap.put(EVENT_PLAY, PlayEvent.class);
         messageTopicMap.put(STATUS_SIDES, DiceStatus.class);
         messageTopicMap.put(INTENT, DiceIntent.class);

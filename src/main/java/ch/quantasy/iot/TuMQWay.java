@@ -6,6 +6,7 @@
 package ch.quantasy.iot;
 
 import ch.quantasy.iot.gateway.servant.SimpleDiceGUIServant;
+import ch.quantasy.iot.gateway.servant.SimpleDiceWebViewServant;
 import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceService;
 import ch.quantasy.iot.gateway.service.gui.SimpleGUIService;
 import java.io.IOException;
@@ -45,9 +46,9 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceService simpleDeviceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
+        SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
         SimpleDiceGUIServant simpleDiceGUIServant = new SimpleDiceGUIServant(mqttURI, computerName);
-        //SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI,computerName);
+        SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI,computerName);
         SimpleGUIService.main(mqttURI.toString());
 
         System.in.read();
