@@ -15,8 +15,6 @@ import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
@@ -30,7 +28,7 @@ public class MemoryUsageService extends GatewayClient<MemoryUsageServiceContract
     private MemoryUsageSensor memoryUsageSenor;
 
     public MemoryUsageService(URI mqttURI,String computerName) throws MqttException, UnknownHostException, IOException {
-        super(mqttURI, computerName + "MemoryUsageService.s0m3-S3cr3t-1D", new MemoryUsageServiceContract(computerName));
+        super(mqttURI, computerName + "MemoryUsageService.s0m3-S3cr3t-1D:", new MemoryUsageServiceContract(computerName));
         memoryUsageSenor = new MemoryUsageSensor(this);
         subscribe(getContract().INTENT + "/#", (topic, payload) -> {
             MemoryUsageIntent intent = toMessageSet(payload, MemoryUsageIntent.class).last();

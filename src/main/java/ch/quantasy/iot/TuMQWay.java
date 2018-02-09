@@ -5,11 +5,7 @@
  */
 package ch.quantasy.iot;
 
-import ch.quantasy.iot.dice.simple.SimpleDice;
 import ch.quantasy.iot.gateway.service.cpuLoad.CPULoadService;
-import ch.quantasy.iot.gateway.service.dice.active.ActiveDiceService;
-import ch.quantasy.iot.gateway.service.dice.callback.CallbackDiceService;
-import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceService;
 import ch.quantasy.iot.gateway.service.memory.MemoryUsageService;
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +19,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @author reto
  */
 public class TuMQWay {
-     private static String computerName;
+
+    private static String computerName;
 
     static {
         try {
@@ -43,12 +40,8 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-       // CPULoadService cpuLoadService = new CPULoadService(mqttURI,computerName);
-       // MemoryUsageService memoryUsageService=new MemoryUsageService(mqttURI,computerName);
-       // CallbackDiceService diceService=new CallbackDiceService(mqttURI);
-        SimpleDiceService simpleDeviceService=new SimpleDiceService(mqttURI,"SimpleDice"+computerName,computerName);
-        
-       // ActiveDiceService activeDiceService=new ActiveDiceService(mqttURI);
+        CPULoadService cpuLoadService = new CPULoadService(mqttURI, computerName);
+        MemoryUsageService memoryUsageService = new MemoryUsageService(mqttURI, computerName);
 
         System.in.read();
     }

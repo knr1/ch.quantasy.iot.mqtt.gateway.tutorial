@@ -9,6 +9,7 @@ import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageEvent;
 import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageIntent;
 import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageStatus;
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
+import ch.quantasy.mqtt.gateway.client.message.Message;
 import java.util.Map;
 
 /**
@@ -34,7 +35,7 @@ public class MemoryUsageServiceContract extends AyamlServiceContract {
     }
 
     @Override
-    public void setMessageTopics(Map messageTopicMap) {
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
         messageTopicMap.put(EVENT_MEMORY_USAGE, MemoryUsageEvent.class);
         messageTopicMap.put(INTENT, MemoryUsageIntent.class);
         messageTopicMap.put(STATUS_MEMORY_USAGE_CALLBACK_PERIOD, MemoryUsageStatus.class);

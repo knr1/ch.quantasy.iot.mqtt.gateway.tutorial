@@ -6,20 +6,21 @@
 package ch.quantasy.iot.gateway.servant;
 
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
+import ch.quantasy.mqtt.gateway.client.message.Message;
 import java.util.Map;
 
 /**
  *
  * @author reto
  */
-public class CPUHealthServantContract extends AyamlServiceContract{
+public class CPUHealthAgentContract extends AyamlServiceContract{
 
-    public CPUHealthServantContract(String rootContext, String baseClass, String instance) {
+    public CPUHealthAgentContract(String rootContext, String baseClass, String instance) {
         super(rootContext, baseClass, instance);
     }
 
     @Override
-    public void setMessageTopics(Map messageTopicMap) {
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
         //none
     }
     

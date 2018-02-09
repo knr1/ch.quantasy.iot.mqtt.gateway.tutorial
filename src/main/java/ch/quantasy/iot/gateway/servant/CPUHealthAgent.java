@@ -27,7 +27,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  *
  * @author reto
  */
-public class CPUHealthServant extends GatewayClient<AyamlServiceContract> {
+public class CPUHealthAgent extends GatewayClient<AyamlServiceContract> {
 
     public static String computerName;
     static {
@@ -41,8 +41,8 @@ public class CPUHealthServant extends GatewayClient<AyamlServiceContract> {
     MemoryUsageServiceContract memServiceContract;
     CPULoadServiceContract cpuServiceContract;
 
-    public CPUHealthServant(URI mqttURI) throws MqttException {
-        super(mqttURI, "ad92f0", new CPUHealthServantContract("Servant", "Reader", "cpuHealth"));
+    public CPUHealthAgent(URI mqttURI) throws MqttException {
+        super(mqttURI, computerName+"ad92f0:", new CPUHealthAgentContract("Agent", "Reader", "cpuHealth"));
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         memServiceContract = new MemoryUsageServiceContract("prisma");
         subscribe(memServiceContract.EVENT_MEMORY_USAGE, (topic, payload) -> {
@@ -72,7 +72,7 @@ public class CPUHealthServant extends GatewayClient<AyamlServiceContract> {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        CPUHealthServant r = new CPUHealthServant(mqttURI);
+        CPUHealthAgent r = new CPUHealthAgent(mqttURI);
 
         System.in.read();
     }

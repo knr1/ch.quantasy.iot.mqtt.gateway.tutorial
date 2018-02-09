@@ -10,8 +10,6 @@ import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import ch.quantasy.iot.cpu.CPULoadSensorCallback;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadEvent;

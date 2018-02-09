@@ -9,6 +9,7 @@ import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadEvent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadIntent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadStatus;
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
+import ch.quantasy.mqtt.gateway.client.message.Message;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class CPULoadServiceContract extends AyamlServiceContract {
     }
 
     @Override
-    public void setMessageTopics(Map messageTopicMap) {
+    public void setMessageTopics(Map<String, Class<? extends Message>> messageTopicMap) {
         messageTopicMap.put(INTENT, CPULoadIntent.class);
         messageTopicMap.put(STATUS_CPU_LOAD_CALLBACK_PERIOD, CPULoadStatus.class);
         messageTopicMap.put(EVENT_CPU_LOAD, CPULoadEvent.class);
