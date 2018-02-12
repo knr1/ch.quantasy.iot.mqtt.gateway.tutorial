@@ -8,7 +8,7 @@ package ch.quantasy.iot.gateway.service.dice.simple;
 import ch.quantasy.iot.dice.simple.SimpleDice;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.net.URI;
-import java.util.Set;
+import java.util.SortedSet;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
@@ -25,13 +25,13 @@ public class SimpleDiceService {
         dice = new SimpleDice();
         gatewayClient.connect();
         gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (topic, payload) -> {
-            Set<DiceIntent> intents = gatewayClient.toMessageSet(payload, DiceIntent.class);
-            intents.stream().filter((intent) -> (intent.play == true)).map((_item) -> {
-                dice.play();
-                return _item;
-            }).forEachOrdered((_item) -> {
-                gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
-            });
+            SortedSet<DiceIntent> intents = gatewayClient.toMessageSet(payload, DiceIntent.class);
+            for(DiceIntent intent:intents){
+                if(intent.play){
+                    dice.play();
+                    gatewayClient.readyToPublish(gatewayClient.getContract().EVENT_PLAY, new PlayEvent(dice.getChosenSide()));
+                }
+            }
         });
         gatewayClient.readyToPublish(gatewayClient.getContract().STATUS_SIDES, new DiceStatus(dice.getAmountOfSides()));
 
