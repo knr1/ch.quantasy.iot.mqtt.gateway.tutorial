@@ -5,6 +5,11 @@
  */
 package ch.quantasy.iot.gateway.service.gui;
 
+import ch.quantasy.iot.gateway.binding.gui.TextFieldTextStatus;
+import ch.quantasy.iot.gateway.binding.gui.UIIntent;
+import ch.quantasy.iot.gateway.binding.gui.ButtonClickedEvent;
+import ch.quantasy.iot.gateway.binding.gui.SimpleGUIServiceContract;
+import ch.quantasy.iot.gateway.binding.gui.ButtonTextStatus;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
 import java.net.URI;

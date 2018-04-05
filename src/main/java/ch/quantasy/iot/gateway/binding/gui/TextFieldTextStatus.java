@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gateway.service.gui;
+package ch.quantasy.iot.gateway.binding.gui;
 
 import ch.quantasy.mqtt.gateway.client.message.AStatus;
 import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
@@ -12,14 +12,15 @@ import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
  *
  * @author reto
  */
-public class ButtonTextStatus extends AStatus {
+public class TextFieldTextStatus extends AStatus {
     @StringForm
     public String text;
 
-    public ButtonTextStatus(String text) {
+    public TextFieldTextStatus(String text) {
         this.text = text;
     }
 
-    private ButtonTextStatus() {
-    }   
+    private TextFieldTextStatus() {
+    }
+    
 }

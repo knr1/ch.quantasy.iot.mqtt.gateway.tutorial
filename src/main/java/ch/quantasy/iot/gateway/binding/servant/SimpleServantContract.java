@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gateway.servant;
+package ch.quantasy.iot.gateway.binding.servant;
 
 import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
 import java.util.Map;

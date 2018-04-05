@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gateway.service.dice.simple;
+package ch.quantasy.iot.gateway.binding.dice.simple;
 
 import ch.quantasy.mqtt.gateway.client.message.AStatus;
+import ch.quantasy.mqtt.gateway.client.message.annotations.Range;
 
 /**
  *
  * @author reto
  */
 public class DiceStatus extends AStatus{
+    @Range(from = 6, to = 6)
     public int sides;
 
     public DiceStatus(int sides) {

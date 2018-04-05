@@ -3,16 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ch.quantasy.iot.gateway.service.dice.simple;
+package ch.quantasy.iot.gateway.binding.dice.simple;
 
 import ch.quantasy.mqtt.gateway.client.message.AnIntent;
+import ch.quantasy.mqtt.gateway.client.message.annotations.Nullable;
+import ch.quantasy.mqtt.gateway.client.message.annotations.Range;
 
 /**
  *
  * @author reto
  */
 public class DiceIntent extends AnIntent{
-    public boolean play;
+    @Nullable
+    public Boolean play;
+    @Nullable
+    @Range(from = 6,to = 6)
+    public Integer amountOfSides;
     
     public DiceIntent(boolean play) {
         this.play = play;

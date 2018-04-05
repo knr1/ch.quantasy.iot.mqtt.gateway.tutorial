@@ -5,9 +5,10 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.iot.gateway.service.dice.simple.DiceIntent;
-import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
-import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
+import ch.quantasy.iot.gateway.binding.servant.SimpleServantContract;
+import ch.quantasy.iot.gateway.binding.dice.simple.DiceIntent;
+import ch.quantasy.iot.gateway.binding.dice.simple.PlayEvent;
+import ch.quantasy.iot.gateway.binding.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.mqtt.gateway.client.ConnectionStatus;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContract> {
 
     SimpleDiceServiceContract simpleDiceServiceContract;
+    
     private Set<String> webViewServiceInstances;
 
     public SimpleDiceWebViewServant(URI mqttURI, String instanceName) throws MqttException {

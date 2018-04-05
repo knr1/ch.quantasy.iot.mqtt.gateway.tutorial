@@ -5,21 +5,19 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.iot.gateway.service.dice.simple.DiceIntent;
-import ch.quantasy.iot.gateway.service.dice.simple.PlayEvent;
-import ch.quantasy.iot.gateway.service.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.iot.gateway.service.gui.SimpleGUIServiceContract;
-import ch.quantasy.iot.gateway.service.gui.UIIntent;
+import ch.quantasy.iot.gateway.binding.servant.SimpleServantContract;
+import ch.quantasy.iot.gateway.binding.dice.simple.DiceIntent;
+import ch.quantasy.iot.gateway.binding.dice.simple.PlayEvent;
+import ch.quantasy.iot.gateway.binding.dice.simple.SimpleDiceServiceContract;
+import ch.quantasy.iot.gateway.binding.gui.SimpleGUIServiceContract;
+import ch.quantasy.iot.gateway.binding.gui.UIIntent;
 import ch.quantasy.mqtt.gateway.client.ConnectionStatus;
 import ch.quantasy.mqtt.gateway.client.GatewayClient;
-import ch.quantasy.mqtt.gateway.client.message.MessageCollector;
-import ch.quantasy.mqtt.gateway.client.message.PublishingMessageCollector;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,6 +29,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
 
     private SimpleDiceServiceContract simpleDiceServiceContract;
+    private SimpleGUIServiceContract anySimpleGUIServiceContract;
     private Set<SimpleGUIServiceContract> simpleGUIServiceInstances;
 
     public SimpleDiceGUIServant(URI mqttURI, String instanceName) throws MqttException {
@@ -38,8 +37,9 @@ public class SimpleDiceGUIServant extends GatewayClient<SimpleServantContract> {
         simpleGUIServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
+        anySimpleGUIServiceContract=new SimpleGUIServiceContract("+");
 
-        subscribe("Tutorial/SimpleGUI/U/+/S/connection", (topic, payload) -> {
+        subscribe(anySimpleGUIServiceContract.STATUS_CONNECTION, (topic, payload) -> {
             System.out.println("Payload: "+new String(payload));
             ConnectionStatus status = toMessageSet(payload, ConnectionStatus.class).last();
             String simpleGUIServiceInstance = topic.replaceFirst("Tutorial/SimpleGUI/U/", "").replaceFirst("/S/connection", "");

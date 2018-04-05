@@ -46,7 +46,7 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
+        //SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
         SimpleDiceGUIServant simpleDiceGUIServant = new SimpleDiceGUIServant(mqttURI, computerName);
         SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI,computerName);
         SimpleGUIService.main(mqttURI.toString());
