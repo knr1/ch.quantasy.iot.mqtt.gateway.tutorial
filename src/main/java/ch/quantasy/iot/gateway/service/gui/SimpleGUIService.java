@@ -56,7 +56,8 @@ public class SimpleGUIService extends Application {
     @Override
     public void init() throws Exception {
         Long timeStamp = System.currentTimeMillis();
-        URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        URI mqttURI = URI.create("tcp://147.87.116.3:1883");
+        //URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         //URI mqttURI = URI.create("tcp://iot.eclipse.org:1883");
 
         String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
@@ -88,7 +89,7 @@ public class SimpleGUIService extends Application {
         gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (String topic, byte[] payload) -> {
             Platform.runLater(() -> {
                 try {
-                    MessageCollector collector=new MessageCollector();
+                    MessageCollector collector = new MessageCollector();
                     Set<UIIntent> uiIntents = gatewayClient.toMessageSet(payload, UIIntent.class);
                     collector.add(topic, uiIntents);
                     for (UIIntent intent : uiIntents) {

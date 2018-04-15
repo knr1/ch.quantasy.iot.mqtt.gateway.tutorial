@@ -38,7 +38,10 @@ public class TuMQWay {
     }
 
     public static void main(String[] args) throws MqttException, InterruptedException, IOException {
-        URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        
+        URI mqttURI = URI.create("tcp://147.87.116.3:1883");
+        
+        //URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         if (args.length > 0) {
             mqttURI = URI.create(args[0]);
         } else {
@@ -46,7 +49,7 @@ public class TuMQWay {
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
-        //SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
+        SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
         SimpleDiceGUIServant simpleDiceGUIServant = new SimpleDiceGUIServant(mqttURI, computerName);
         SimpleDiceWebViewServant simpleDiceWebViewServant=new SimpleDiceWebViewServant(mqttURI,computerName);
         SimpleGUIService.main(mqttURI.toString());
