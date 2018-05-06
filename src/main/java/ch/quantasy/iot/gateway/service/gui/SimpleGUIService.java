@@ -56,9 +56,10 @@ public class SimpleGUIService extends Application {
     @Override
     public void init() throws Exception {
         Long timeStamp = System.currentTimeMillis();
-        URI mqttURI = URI.create("tcp://147.87.116.3:1883");
-        //URI mqttURI = URI.create("tcp://127.0.0.1:1883");
+        //URI mqttURI = URI.create("tcp://147.87.116.3:1883");
+        URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         //URI mqttURI = URI.create("tcp://iot.eclipse.org:1883");
+        //URI mqttURI=URI.create("ssl://iot.eclipse.org:8883");
 
         String mqttClientName = "SimpleGUI" + computerName + ":" + timeStamp;
         instanceName = (timeStamp % 10000) + "@" + computerName;
