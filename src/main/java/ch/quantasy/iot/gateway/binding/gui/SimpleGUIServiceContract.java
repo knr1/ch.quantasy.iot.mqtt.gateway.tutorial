@@ -5,8 +5,8 @@
  */
 package ch.quantasy.iot.gateway.binding.gui;
 
-import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
-import ch.quantasy.mqtt.gateway.client.message.Message;
+import ch.quantasy.mdservice.message.Message;
+import ch.quantasy.mdsmqtt.gateway.client.contract.AyamlServiceContract;
 import java.util.Map;
 
 /**

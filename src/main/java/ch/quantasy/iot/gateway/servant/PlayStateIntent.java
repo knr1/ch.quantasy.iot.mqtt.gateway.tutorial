@@ -5,7 +5,7 @@
  */
 package ch.quantasy.iot.gateway.servant;
 
-import ch.quantasy.mqtt.gateway.client.message.AnIntent;
+import ch.quantasy.mdservice.message.AnIntent;
 
 /**
  *

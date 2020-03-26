@@ -5,7 +5,7 @@
  */
 package ch.quantasy.iot.gateway.binding.gui;
 
-import ch.quantasy.mqtt.gateway.client.message.AnEvent;
+import ch.quantasy.mdservice.message.AnEvent;
 
 /**
  *

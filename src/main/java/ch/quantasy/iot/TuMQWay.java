@@ -14,7 +14,6 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  * This is a convenience class that starts the Services and the Servant. Please
@@ -37,22 +36,23 @@ public class TuMQWay {
         }
     }
 
-    public static void main(String[] args) throws MqttException, InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
-        //URI mqttURI = URI.create("tcp://147.87.116.3:1883");
+        //URI mqttURI = URI.create("tcp://147.87.116.34:1883");
         //URI mqttURI = URI.create("ssl://iot.eclipse.org:8883");
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         if (args.length > 0) {
             mqttURI = URI.create(args[0]);
         } else {
-            System.out.printf("Per default, 'tcp://127.0.0.1:1883' is chosen.\nYou can provide another address as first argument i.e.: tcp://iot.eclipse.org:1883\n");
+            System.out.printf("Per default, '%s' is chosen.\nYou can provide another address as first argument i.e.: tcp://iot.eclipse.org:1883\n", mqttURI.toASCIIString());
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 
         SimpleDiceService simpleDiceService = new SimpleDiceService(mqttURI, "SimpleDice" + computerName, computerName);
         SimpleDiceGUIServant simpleDiceGUIServant = new SimpleDiceGUIServant(mqttURI, computerName);
         SimpleDiceWebViewServant simpleDiceWebViewServant = new SimpleDiceWebViewServant(mqttURI, computerName);
-        SimpleGUIService.main(mqttURI.toString());
+        Thread.sleep(100);
+        SimpleGUIService simpleGUIService = new SimpleGUIService(mqttURI, computerName);
 
         System.in.read();
     }

@@ -9,31 +9,29 @@ import ch.quantasy.iot.gateway.binding.servant.SimpleServantContract;
 import ch.quantasy.iot.gateway.binding.dice.simple.DiceIntent;
 import ch.quantasy.iot.gateway.binding.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.binding.dice.simple.SimpleDiceServiceContract;
-import ch.quantasy.mqtt.gateway.client.ConnectionStatus;
-import ch.quantasy.mqtt.gateway.client.GatewayClient;
+import ch.quantasy.mdsmqtt.gateway.client.ConnectionStatus;
+import ch.quantasy.mdsmqtt.gateway.client.MQTTGatewayClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  *
  * @author reto
  */
-public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContract> {
+public class SimpleDiceWebViewServant extends MQTTGatewayClient<SimpleServantContract> {
 
     SimpleDiceServiceContract simpleDiceServiceContract;
     
     private Set<String> webViewServiceInstances;
 
-    public SimpleDiceWebViewServant(URI mqttURI, String instanceName) throws MqttException {
-        super(mqttURI, "ad92f0" + "SimpleDiceServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "WebView", instanceName));
+    public SimpleDiceWebViewServant(URI mqttURI, String instanceName) {
+        super(mqttURI, "ad92f0" + "SimpleDiceServant" + instanceName, new SimpleServantContract("Tutorial/Servant", "WebView", instanceName),true);
         webViewServiceInstances = new HashSet<>();
         connect(); //If connection is made before subscribitions, no 'historical' will be treated of the non-clean session 
         simpleDiceServiceContract = new SimpleDiceServiceContract(instanceName);
@@ -54,7 +52,7 @@ public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContrac
         });
 
         subscribe("Tutorial/WebView/+/S/connection", (topic, payload) -> {
-            ConnectionStatus status = new TreeSet<>(toMessageSet(payload, ConnectionStatus.class)).last();
+            ConnectionStatus status = toMessageSet(payload, ConnectionStatus.class).last();
             String webViewServiceInstance = topic.replaceFirst("/S/connection", "");
             System.out.println(webViewServiceInstance + " " + status);
 
@@ -78,12 +76,12 @@ public class SimpleDiceWebViewServant extends GatewayClient<SimpleServantContrac
         }
     }
 
-    public static void main(String[] args) throws MqttException, InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         URI mqttURI = URI.create("tcp://127.0.0.1:1883");
         if (args.length > 0) {
             mqttURI = URI.create(args[0]);
         } else {
-            System.out.printf("Per default, 'tcp://127.0.0.1:1883' is chosen.\nYou can provide another address as first argument i.e.: tcp://iot.eclipse.org:1883\n");
+            System.out.printf("Per default, '%s' is chosen.\nYou can provide another address as first argument i.e.: tcp://iot.eclipse.org:1883\n",mqttURI.toASCIIString());
         }
         System.out.printf("\n%s will be used as broker address.\n", mqttURI);
 

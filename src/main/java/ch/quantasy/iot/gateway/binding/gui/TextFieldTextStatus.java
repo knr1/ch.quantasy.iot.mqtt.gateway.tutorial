@@ -5,8 +5,8 @@
  */
 package ch.quantasy.iot.gateway.binding.gui;
 
-import ch.quantasy.mqtt.gateway.client.message.AStatus;
-import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
+import ch.quantasy.mdservice.message.AStatus;
+import ch.quantasy.mdservice.message.annotations.StringForm;
 
 /**
  *

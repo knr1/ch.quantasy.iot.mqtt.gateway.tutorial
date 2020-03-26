@@ -5,9 +5,9 @@
  */
 package ch.quantasy.iot.gateway.binding.gui;
 
-import ch.quantasy.mqtt.gateway.client.message.AnIntent;
-import ch.quantasy.mqtt.gateway.client.message.annotations.Nullable;
-import ch.quantasy.mqtt.gateway.client.message.annotations.StringForm;
+import ch.quantasy.mdservice.message.AnIntent;
+import ch.quantasy.mdservice.message.annotations.Nullable;
+import ch.quantasy.mdservice.message.annotations.StringForm;
 
 /**
  *

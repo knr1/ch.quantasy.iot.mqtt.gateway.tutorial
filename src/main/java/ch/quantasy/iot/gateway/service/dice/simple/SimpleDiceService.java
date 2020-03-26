@@ -10,10 +10,9 @@ import ch.quantasy.iot.gateway.binding.dice.simple.SimpleDiceServiceContract;
 import ch.quantasy.iot.gateway.binding.dice.simple.PlayEvent;
 import ch.quantasy.iot.gateway.binding.dice.simple.DiceStatus;
 import ch.quantasy.iot.dice.simple.SimpleDice;
-import ch.quantasy.mqtt.gateway.client.GatewayClient;
+import ch.quantasy.mdsmqtt.gateway.client.MQTTGatewayClient;
 import java.net.URI;
 import java.util.SortedSet;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  *
@@ -22,10 +21,10 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class SimpleDiceService {
 
     private final SimpleDice dice;
-    private final GatewayClient<SimpleDiceServiceContract> gatewayClient;
+    private final MQTTGatewayClient<SimpleDiceServiceContract> gatewayClient;
 
-    public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName) throws MqttException {
-        gatewayClient = new GatewayClient<>(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName));
+    public SimpleDiceService(URI mqttURI, String mqttClientName, String instanceName){
+        gatewayClient = new MQTTGatewayClient<>(mqttURI, mqttClientName, new SimpleDiceServiceContract(instanceName),true);
         dice = new SimpleDice();
         gatewayClient.connect();
         gatewayClient.subscribe(gatewayClient.getContract().INTENT + "/#", (topic, payload) -> {
