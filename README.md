@@ -712,6 +712,83 @@ function onIntent(message) {
 }
 ``` 
 
+# API
+But in fact you would not really care how it is implemented... You only care how to access it. Here is the API:
+
+
+
+### SimpleDice
+```
+Tutorial/SimpleDice/U/<id>/E/play
+   required: # this tag is not part of the data structure
+     chosenSide: Number <from: 1 to: 6>
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   
+```
+```
+Tutorial/SimpleDice/U/<id>/I
+   required: # this tag is not part of the data structure
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   optional: # this tag is not part of the data structure
+     amountOfSides: Number <from: 6 to: 6>
+     play: Boolean <true,false>
+   
+```
+```
+Tutorial/SimpleDice/U/<id>/S/connection
+   required: # this tag is not part of the data structure
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+     value: String <[online, offline]>
+   
+```
+```
+Tutorial/SimpleDice/U/<id>/S/sides
+   required: # this tag is not part of the data structure
+     sides: Number <from: 6 to: 6>
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   
+```
+
+### SimpleGUI
+```
+Tutorial/SimpleGUI/U/<id>/E/button/clicked
+   required: # this tag is not part of the data structure
+     clicked: Boolean <true,false>
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   
+```
+```
+Tutorial/SimpleGUI/U/<id>/I
+   required: # this tag is not part of the data structure
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   optional: # this tag is not part of the data structure
+     buttonText: String <regEx: [\S\s]*>
+     textFieldText: String <regEx: [\S\s]*>
+   
+```
+```
+Tutorial/SimpleGUI/U/<id>/S/button/text
+   required: # this tag is not part of the data structure
+     text: String <regEx: [\S\s]*>
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   
+```
+```
+Tutorial/SimpleGUI/U/<id>/S/connection
+   required: # this tag is not part of the data structure
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+     value: String <[online, offline]>
+   
+```
+```
+Tutorial/SimpleGUI/U/<id>/S/textField/text
+   required: # this tag is not part of the data structure
+     text: String <regEx: [\S\s]*>
+     timeStamp: Number <from: 0 to: 9223372036854775807> # default: Current time in nano seconds
+   
+```
+
+
 Switch to [Master]
 
 [Master]:<https://github.com/knr1/ch.quantasy.iot.mqtt.gateway.tutorial/tree/master>
