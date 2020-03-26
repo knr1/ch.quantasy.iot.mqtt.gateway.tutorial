@@ -43,4 +43,12 @@ public class SimpleGUIServiceContract extends AyamlServiceContract {
         messageTopicMap.put(STATUS_TEXTFIELD_TEXT, TextFieldTextStatus.class);
     }
 
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+    
+    
+    
+
 }

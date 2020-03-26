@@ -53,7 +53,7 @@ public class SimpleDiceGUIServant extends MQTTGatewayClient<SimpleServantContrac
                     readyToPublish(simpleDiceServiceContract.INTENT, new DiceIntent(true));
                 });
             } else {
-                simpleGUIServiceInstances.remove(simpleGUIServiceInstance);
+                simpleGUIServiceInstances.remove(simpleGUIServiceContract);
             }
         });
 
