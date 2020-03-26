@@ -5,8 +5,8 @@
  */
 package ch.quantasy.iot.gateway.service.memory.message;
 
-import ch.quantasy.mqtt.gateway.client.message.AnEvent;
-import ch.quantasy.mqtt.gateway.client.message.annotations.Range;
+import ch.quantasy.mdservice.message.AnEvent;
+import ch.quantasy.mdservice.message.annotations.Range;
 
 /**
  *

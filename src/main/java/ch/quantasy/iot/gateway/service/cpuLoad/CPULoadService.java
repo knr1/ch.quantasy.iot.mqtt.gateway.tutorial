@@ -6,26 +6,25 @@
 package ch.quantasy.iot.gateway.service.cpuLoad;
 
 import ch.quantasy.iot.cpu.CPULoadSensor;
-import ch.quantasy.mqtt.gateway.client.GatewayClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import ch.quantasy.iot.cpu.CPULoadSensorCallback;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadEvent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadIntent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadStatus;
+import ch.quantasy.mdsmqtt.gateway.client.MQTTGatewayClient;
 
 /**
  *
  * @author reto
  */
-public class CPULoadService extends GatewayClient<CPULoadServiceContract> implements CPULoadSensorCallback {
+public class CPULoadService extends MQTTGatewayClient<CPULoadServiceContract> implements CPULoadSensorCallback {
 
     private CPULoadSensor cpuLoadSensor;
 
-    public CPULoadService(URI mqttURI,String computerName) throws MqttException, UnknownHostException, IOException {
-        super(mqttURI, computerName + "CPULoadService.s0m3-S3cr3t-1D", new CPULoadServiceContract(computerName));
+    public CPULoadService(URI mqttURI,String computerName) throws UnknownHostException, IOException {
+        super(mqttURI, computerName + "CPULoadService.s0m3-S3cr3t-1D", new CPULoadServiceContract(computerName),false);
         cpuLoadSensor = new CPULoadSensor(this);
         subscribe(getContract().INTENT + "/#", (topic, payload) -> {
             CPULoadIntent intent = toMessageSet(payload, CPULoadIntent.class).last();

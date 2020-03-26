@@ -8,8 +8,8 @@ package ch.quantasy.iot.gateway.service.memory;
 import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageEvent;
 import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageIntent;
 import ch.quantasy.iot.gateway.service.memory.message.MemoryUsageStatus;
-import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
-import ch.quantasy.mqtt.gateway.client.message.Message;
+import ch.quantasy.mdservice.message.Message;
+import ch.quantasy.mdsmqtt.gateway.client.contract.AyamlServiceContract;
 import java.util.Map;
 
 /**

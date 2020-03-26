@@ -8,8 +8,8 @@ package ch.quantasy.iot.gateway.service.cpuLoad;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadEvent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadIntent;
 import ch.quantasy.iot.gateway.service.cpuLoad.message.CPULoadStatus;
-import ch.quantasy.mqtt.gateway.client.contract.AyamlServiceContract;
-import ch.quantasy.mqtt.gateway.client.message.Message;
+import ch.quantasy.mdservice.message.Message;
+import ch.quantasy.mdsmqtt.gateway.client.contract.AyamlServiceContract;
 import java.util.Map;
 
 /**

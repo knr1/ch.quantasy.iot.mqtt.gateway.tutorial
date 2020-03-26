@@ -5,9 +5,8 @@
  */
 package ch.quantasy.iot.gateway.service.cpuLoad.message;
 
-import ch.quantasy.mqtt.gateway.client.message.AStatus;
-import ch.quantasy.mqtt.gateway.client.message.AnIntent;
-import ch.quantasy.mqtt.gateway.client.message.annotations.Period;
+import ch.quantasy.mdservice.message.AStatus;
+import ch.quantasy.mdservice.message.annotations.Period;
 
 /**
  *

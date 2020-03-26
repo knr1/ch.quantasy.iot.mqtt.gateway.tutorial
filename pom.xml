@@ -3,22 +3,23 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ch.quantasy</groupId>
     <artifactId>ch.quantasy.mqtt.gateway.tutorial</artifactId>
-     <version>1.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>12</maven.compiler.source>
+        <maven.compiler.target>12</maven.compiler.target>
+        <maven.compiler.release>12</maven.compiler.release>
     </properties>
     <dependencies>
         <dependency>
             <groupId>ch.quantasy</groupId>
-            <artifactId>ch.quantasy.mqtt.gateway</artifactId>
+            <artifactId>mds.MQTT</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>ch.quantasy</groupId>
-            <artifactId>ch.quantasy.timer.mqtt.gateway</artifactId>
+            <artifactId>mds.Timer</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         
